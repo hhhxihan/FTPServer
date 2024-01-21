@@ -6,7 +6,7 @@ using namespace std;
 class FTPserverCMD:public FTPTask{
     public:
         void registerCMD(string cmd,FTPTask* taskObj); //关联命令和命令处理对象
-        
+        void readcmd(struct bufferevent* bev);  //读取命令
     private:
         map<string,FTPTask*> TaskCMD;  //映射字符串和相对的命令处理对象
 };

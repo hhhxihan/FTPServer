@@ -5,3 +5,7 @@ void FTPserverCMD::registerCMD(string cmd,FTPTask* taskObj){
         TaskCMD[cmd]=taskObj;
     }
 }
+
+void FTPserverCMD::readcmd(struct bufferevent* bev){
+    //从一个缓冲事件中读取
+}

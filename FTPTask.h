@@ -6,7 +6,7 @@ using namespace std;
 class FTPTask:public Task{
     public:
         virtual int processCMD(string cmd,string msg); //用于处理命令
-        void readcmd();  //读取命令
+        
         int resPond(); //回复命令
         int Init(){}
 
