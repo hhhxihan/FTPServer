@@ -10,3 +10,5 @@ class FTPserverCMD:public FTPTask{
     private:
         map<string,FTPTask*> TaskCMD;  //映射字符串和相对的命令处理对象
 };
+
+

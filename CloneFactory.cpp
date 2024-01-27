@@ -12,10 +12,12 @@ class CloneFactory{
     }
     FTPTask* createTask(){
         FTPTask* TaskCMD=new FTPserverCMD();
-        TaskCMD->registerCMD();
-        TaskCMD->registerCMD();
-        TaskCMD->registerCMD();
-        TaskCMD->registerCMD();
+        // TaskCMD->registerCMD();
+        // TaskCMD->registerCMD();
+        // TaskCMD->registerCMD();
+        // TaskCMD->registerCMD();
+
+        return TaskCMD;
     }
     private:
     CloneFactory(){};

@@ -5,10 +5,18 @@ using namespace std;
 
 class FTPTask:public Task{
     public:
+        
+
+        std::string currentDir="/";
+        std::string rootDir=".";
+
+        std::string transIP="";
+        int transPort=0;
+
         virtual int processCMD(string cmd,string msg); //用于处理命令
         
         int resPond(); //回复命令
-        int Init(){}
+        int Init();  //将任务添加到base中进行监听，并添加回调函数
 
     private:
         int readCB();   //读事件的回调函数

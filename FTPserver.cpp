@@ -1,14 +1,19 @@
 #include <winsock2.h>
+#include "CloneFactory.cpp"
+
 using namespace std;
 
-void callback(void* arg){
-    
+void callback(struct evconnlistener* evlistener,evutil_socket_t fd,struct sockaddr* address,int socklen,void* arg){
+    FTPTask* t=CloneFactory.get()->createTask();
+    t.socketID=fd;
+    t.Init();
+    //把t分配给一个线程
 }
 
 int main()
 {
 
-    event_base* base=event_base_new();
+    event_base* base=event_base_new(); //创建Libevent事件库
 
 
     //设置服务器的地址信息
