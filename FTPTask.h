@@ -13,17 +13,21 @@ class FTPTask:public Task{
         std::string transIP="";
         int transPort=0;
 
-        virtual int processCMD(string cmd,string msg); //用于处理命令
+        FTPTask* belongTask;
+        struct base_event* base; //Libevent库
+        
+        virtual void processCMD(string cmd,string msg); //用于处理命令
         
         int resPond(); //回复命令
-        int Init();  //将任务添加到base中进行监听，并添加回调函数
+        int Init(struct event_base* tbase);  //将任务添加到base中进行监听，并添加回调函数
 
     private:
-        int readCB();   //读事件的回调函数
-        int writeCB();  //写事件的回调函数
-        int eventCB();  //出错时的回调函数
+        void readCB(struct bufferevent* bev,void* arg);   //读事件的回调函数
+        void writeCB(struct bufferevent* bev,void* arg);  //写事件的回调函数
+        void eventCB(struct bufferevent* bev,void* arg);  //出错时的回调函数
 
         SOCKET socketID;  //task中的一个传输控制命令的socket
-        base_event* base; //Libevent库
-        Thread_t threadID; //所属线程ID；
+        
+        int threadID; //所属线程ID；
 };
+
