@@ -1,6 +1,5 @@
 
-
 class Task{
     public:
-        virtual int Init()=0;
+        virtual int Init(struct event_base* tbase)=0;
 };

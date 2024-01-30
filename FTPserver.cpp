@@ -13,6 +13,7 @@ void callback(struct evconnlistener* evlistener,evutil_socket_t fd,struct sockad
 int main()
 {
 
+    FTPTask* t=new FTPTask();
     event_base* base=event_base_new(); //创建Libevent事件库
 
 
