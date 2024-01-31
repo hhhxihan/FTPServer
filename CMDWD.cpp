@@ -41,10 +41,10 @@ class CMDWD:public FTPTask{
                 string result;
                 string _Command;
                 _Command.append("ls -l "+belongTask->currentDir);
-                FILE* _pipe=popen(_Command.c_str(),"r");
+                file=popen(_Command.c_str(),"r");
                 char buf[100];
-                if(!_pipe){
-                    while(fgets(buf,100,_pipe)!=NULL){
+                if(!file){
+                    while(fgets(buf,100,file)!=NULL){
                         result+=buf;
                     }
                 }
@@ -52,6 +52,15 @@ class CMDWD:public FTPTask{
             }
             
         }
+        
+        void CMDWD::event(struct bufferevent* bev, short what){
+            if (what & (BEV_EVENT_EOF | BEV_EVENT_ERROR | BEV_EVENT_TIMEOUT))
+            {
+                cout << "BEV_EVENT_EOF | BEV_EVENT_ERROR" << endl;
+                Closefd();
+                ResCMD("226 Transfer complete\r\n");
+            }
+        }
 };
 
-    
+

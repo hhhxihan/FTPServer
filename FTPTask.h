@@ -5,8 +5,8 @@ using namespace std;
 
 class FTPTask:public Task{
     public:
-        std::string currentDir="/";
-        std::string rootDir=".";
+        std::string currentDir="/";  //目录的绝对路径
+        std::string rootDir=".";     //当前目录的相对路径
 
         std::string transIP="";
         int transPort=0;
@@ -29,9 +29,11 @@ class FTPTask:public Task{
             return 0;
         }  
 
+        void virtual Closefd();
+
         void virtual read(struct bufferevent* bev);
         void virtual write(struct bufferevent* bev);
-        void virtual event(struct bufferevent* bev,short event);
+        void virtual event(struct bufferevent* bev,short _event);
 
     protected:
         void readCB(struct bufferevent* bev,void* arg);   //读事件的回调函数
@@ -41,5 +43,6 @@ class FTPTask:public Task{
         struct bufferevent* bev;  //task中的一个传输控制命令的socket
         
         int threadID; //所属线程ID；
+        FILE* file;
 };
 

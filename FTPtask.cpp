@@ -12,8 +12,8 @@ void FTPTask::ConnectDataPipe(){
     bev=bufferevent_socket_new(base,-1,BEV_OPT_CLOSE_ON_FREE);
     sockaddr_in sin;
     sin.sin_family=AF_INET;
-    sin.sin_port=htons(transPort);
-    sin.sin_addr.s_addr=inet_addr(transIP.c_str());
+    sin.sin_port=htons(belongTask->transPort);
+    sin.sin_addr.s_addr=inet_addr(belongTask->transIP.c_str());
 
     bufferevent_setcb(base,readCB,writeCB,eventCB,this);
     bufferevent_enable(bev,EV_READ|EV_WRITE);
@@ -30,13 +30,24 @@ void FTPTask::sendData(string msg){
 
 void FTPTask::readCB(struct bufferevent* bev,void* arg){
     FTPTask* t=static_cast<FTPTask*>(arg);
-    t->readCMD(bev);
+    t->read(bev);
 }
 
 void FTPTask::writeCB(struct bufferevent* bev,void* arg){
-
+    FTPTask* t=static_cast<FTPTask*>(arg);
+    t->write(bev);
 }
 
 void FTPTask::eventCB(struct bufferevent* bev,short event,void* arg){
-    
+    FTPTask* t=static_cast<FTPTask*>(arg);
+    t->event(bev,event);
+}
+
+void FTPTask::Closefd(){
+    if(!bev){
+        bufferevent_free(bev);
+    }
+    if(!file){
+        fclose(file);
+    }
 }
