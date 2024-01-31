@@ -38,6 +38,17 @@ class CMDWD:public FTPTask{
                 transPort=belongTask->transPort;
 
                 ConnectDataPipe();
+                string result;
+                string _Command;
+                _Command.append("ls -l "+belongTask->currentDir);
+                FILE* _pipe=popen(_Command.c_str(),"r");
+                char buf[100];
+                if(!_pipe){
+                    while(fgets(buf,100,_pipe)!=NULL){
+                        result+=buf;
+                    }
+                }
+                sendData(result);
             }
             
         }

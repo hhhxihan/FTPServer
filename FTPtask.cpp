@@ -36,3 +36,7 @@ void FTPTask::readCB(struct bufferevent* bev,void* arg){
 void FTPTask::writeCB(struct bufferevent* bev,void* arg){
 
 }
+
+void FTPTask::eventCB(struct bufferevent* bev,short event,void* arg){
+    
+}

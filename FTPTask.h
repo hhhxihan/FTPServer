@@ -29,10 +29,14 @@ class FTPTask:public Task{
             return 0;
         }  
 
+        void virtual read(struct bufferevent* bev);
+        void virtual write(struct bufferevent* bev);
+        void virtual event(struct bufferevent* bev,short event);
+
     protected:
         void readCB(struct bufferevent* bev,void* arg);   //读事件的回调函数
         void writeCB(struct bufferevent* bev,void* arg);  //写事件的回调函数
-        void eventCB(struct bufferevent* bev,void* arg);  //出错时的回调函数
+        void eventCB(struct bufferevent* bev,short event,void* arg);  //出错时的回调函数
 
         struct bufferevent* bev;  //task中的一个传输控制命令的socket
         
