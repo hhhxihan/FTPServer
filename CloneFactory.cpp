@@ -1,7 +1,12 @@
+#ifndef CLONEFACTORY_CPP
+#define CLONEFACTORY_CPP
+
 #include "FTPTask.h"
 #include "FTPserverCMD.h"
 #include "CMDPORT.cpp"
 #include "CMDWD.cpp"
+#include "CMDSTOR.h"
+#include "CMDRETR.h"
 //单例模式的工厂
 
 class CloneFactory{
@@ -13,12 +18,15 @@ class CloneFactory{
         return singleFactory;
     }
     FTPTask* createTask(){
-        FTPTask* TaskCMD=new FTPserverCMD();
+        FTPserverCMD* TaskCMD=new FTPserverCMD();
         TaskCMD->registerCMD("PORT",new CMDPORT());
         FTPTask* wd=new CMDWD();
         TaskCMD->registerCMD("LIST",wd);
         TaskCMD->registerCMD("PWD",wd);
         TaskCMD->registerCMD("CWD",wd);
+
+        TaskCMD->registerCMD("STOR",new CMDSTOR());
+        TaskCMD->registerCMD("RETR",new CMDRETR());
 
         return TaskCMD;
     }
@@ -27,3 +35,4 @@ class CloneFactory{
     ~CloneFactory(){};
     static CloneFactory* singleFactory;
 };
+#endif

@@ -1,6 +1,6 @@
 #pragma once
 #include "FTPTask.h"
-
+#include <iostream>
 class CMDWD:public FTPTask{
     public:
         void processCMD(string cmd,string msg){
@@ -58,7 +58,7 @@ class CMDWD:public FTPTask{
             {
                 cout << "BEV_EVENT_EOF | BEV_EVENT_ERROR" << endl;
                 Closefd();
-                ResCMD("226 Transfer complete\r\n");
+                resPond("226 Transfer complete\r\n");
             }
         }
 };
