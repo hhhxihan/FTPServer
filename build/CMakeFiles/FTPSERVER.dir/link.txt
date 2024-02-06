@@ -1,1 +1,0 @@
-/usr/bin/c++ CMakeFiles/FTPSERVER.dir/FTPTask.cpp.o CMakeFiles/FTPSERVER.dir/FTPThread.cpp.o CMakeFiles/FTPSERVER.dir/FTPThreadPool.cpp.o CMakeFiles/FTPSERVER.dir/CMDRETR.cpp.o CMakeFiles/FTPSERVER.dir/CMDSTOR.cpp.o CMakeFiles/FTPSERVER.dir/FTPserverCMD.cpp.o CMakeFiles/FTPSERVER.dir/CloneFactory.cpp.o CMakeFiles/FTPSERVER.dir/FTPserver.cpp.o -o FTPSERVER  -levent -lstdc++fs 
