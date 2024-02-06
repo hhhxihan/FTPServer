@@ -2,7 +2,7 @@
 
 FTPThreadPool::FTPThreadPool(int num){
     threadVector=vector<FTPThread>(num);
-    for(FTPThread t:threadVector){
+    for(FTPThread& t:threadVector){
         t.Init();
     }
 }

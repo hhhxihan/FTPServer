@@ -12,6 +12,7 @@ void FTPThread::AddTask(FTPTask* task){
 
 void FTPThread::Init(){//线程的初始化
     base=event_base_new();
+    if(!base) cout<<"Thread event_base create failed"<<endl;
 
     std::thread th(&FTPThread::Main,this);
     th.detach();

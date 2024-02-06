@@ -1,6 +1,8 @@
 #ifndef FTPTHREAD_H
 #define FTPTHREAD_H
 #include "FTPTask.h"
+#include <iostream>
+using namespace std;
 
 class FTPThread{
     public:

@@ -1,10 +1,11 @@
 #include "FTPTask.h"
+#include <iostream>
 #include <event2/event.h>
 #include <event2/bufferevent.h>
 #include <arpa/inet.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
-
+using namespace std;
 
 void FTPTask::resPond(string msg){
     bufferevent_write(belongTask->bev,msg.c_str(),msg.size());
@@ -33,6 +34,7 @@ void FTPTask::sendData(string msg){
 
 void FTPTask::readCB(struct bufferevent* bev,void* arg){
     FTPTask* t=static_cast<FTPTask*>(arg);
+    cout<<"new command!"<<endl;
     t->read(bev);
 }
 

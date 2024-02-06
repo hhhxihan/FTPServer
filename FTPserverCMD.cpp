@@ -35,3 +35,7 @@ void FTPserverCMD::readcmd(struct bufferevent* bev){
     }
 
 }
+
+void FTPserverCMD::read(struct bufferevent* bev){
+    readcmd(bev);
+}
