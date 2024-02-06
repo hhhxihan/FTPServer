@@ -1,0 +1,3 @@
+/home/liu/Documents/FTPServer/build/CMakeFiles/FTPSERVER.dir
+/home/liu/Documents/FTPServer/build/CMakeFiles/edit_cache.dir
+/home/liu/Documents/FTPServer/build/CMakeFiles/rebuild_cache.dir

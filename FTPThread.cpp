@@ -1,8 +1,11 @@
 #include "FTPThread.h"
 #include <thread>
+#include <event2/event.h>
+#include <event2/bufferevent.h>
 void FTPThread::AddTask(FTPTask* task){
     
-    task->Init();
+    task->Init(base);//初始化任务
+
 }
 
 
@@ -10,7 +13,7 @@ void FTPThread::AddTask(FTPTask* task){
 void FTPThread::Init(){//线程的初始化
     base=event_base_new();
 
-    std::thread th(Main);
+    std::thread th(&FTPThread::Main,this);
     th.detach();
     
 }

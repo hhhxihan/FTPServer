@@ -53,7 +53,7 @@ class CMDWD:public FTPTask{
             
         }
         
-        void CMDWD::event(struct bufferevent* bev, short what){
+        void event(struct bufferevent* bev, short what){
             if (what & (BEV_EVENT_EOF | BEV_EVENT_ERROR | BEV_EVENT_TIMEOUT))
             {
                 cout << "BEV_EVENT_EOF | BEV_EVENT_ERROR" << endl;
