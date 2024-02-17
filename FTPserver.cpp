@@ -14,8 +14,10 @@ CloneFactory* CloneFactory::singleFactory=nullptr;
 void callback(struct evconnlistener* evlistener,evutil_socket_t fd,struct sockaddr* address,int socklen,void* arg){
     cout<<"new conncet"<<endl;
     FTPTask* t=CloneFactory::get()->createTask();
+    
     if(!t) cout<<"FTPTask create failed"<<endl;
     t->socketID=fd;
+    cout<<"??"<<endl;
     threadPool->addTask(t);
     //把t分配给一个线程
 }
@@ -36,7 +38,7 @@ int main()
     //设置服务器的地址信息
     struct sockaddr_in server_addr;
     server_addr.sin_addr.s_addr=INADDR_ANY;
-    server_addr.sin_port=htons(21);
+    server_addr.sin_port=htons(8082);
     server_addr.sin_family=AF_INET;
 
     struct evconnlistener* ev=evconnlistener_new_bind(base,callback,NULL, LEV_OPT_REUSEABLE,100,

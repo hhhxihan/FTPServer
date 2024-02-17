@@ -3,9 +3,8 @@
 #include <event2/event.h>
 #include <event2/bufferevent.h>
 void FTPThread::AddTask(FTPTask* task){
-    
-    task->Init(base);//初始化任务
 
+    task->Init(base);//初始化任务
 }
 
 

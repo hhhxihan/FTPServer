@@ -3,6 +3,7 @@
 
 #include "Task.h"
 #include <string>
+#include <iostream>
 #include <event2/event.h>
 #include <event2/bufferevent.h>
 
@@ -29,9 +30,15 @@ class FTPTask:public Task{
         void sendData(string msg);
         int Init(struct event_base* tbase) {  //将任务添加到base中进行监听，并添加回调函数
              this->base=tbase;
+
              struct bufferevent* bev=bufferevent_socket_new(base,socketID,BEV_OPT_CLOSE_ON_FREE);
+             if(!bev){
+                cout<<"bufferevent create failed"<<endl;
+             }
              bufferevent_setcb(bev,readCB,writeCB,eventCB,this);
+
              bufferevent_enable(bev,EV_READ|EV_WRITE);
+             cout<<"add event success!"<<endl;
             return 0;
         }  
 

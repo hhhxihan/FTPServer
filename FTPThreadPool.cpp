@@ -2,6 +2,7 @@
 
 FTPThreadPool::FTPThreadPool(int num){
     threadVector=vector<FTPThread>(num);
+    maxNum=num;
     for(FTPThread& t:threadVector){
         t.Init();
     }
