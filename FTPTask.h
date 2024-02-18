@@ -37,10 +37,11 @@ class FTPTask:public Task{
             if(bev){
                 cout<<"enter bev process!"<<endl;
                 bufferevent_setcb(bev,readCB,writeCB,eventCB,this);
-                cout<<bev<<endl;
+                cout<<"set callback success!"<<bev<<endl;
                 if(-1==bufferevent_enable(bev,EV_READ)){
                     cout<<"buffevent_enable faild!"<<endl;
                 }
+                cout<<"buffevent_enable success!"<<endl;
                 char buf[]="220 connect success!";
                 bufferevent_write(bev,buf,sizeof(buf));
                 cout<<"connect success!"<<endl;
