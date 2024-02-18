@@ -18,6 +18,7 @@ void FTPThread::Init(){//线程的初始化
 }
 
 void FTPThread::Main(){ //线程的函数就是启动event_base；
+
 	event_base_dispatch(base);
 	event_base_free(base);
 

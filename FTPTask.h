@@ -19,7 +19,7 @@ class FTPTask:public Task{
 
         FTPTask* belongTask;
         event_base* base; //Libevent库int
-        int socketID; 
+        evutil_socket_t  socketID; 
 
         virtual void processCMD(string cmd,string msg){}; //用于处理命令
         
@@ -35,11 +35,15 @@ class FTPTask:public Task{
             }
             struct bufferevent* bev=bufferevent_socket_new(base,socketID,BEV_OPT_CLOSE_ON_FREE);
             if(bev){
+                cout<<"enter bev process!"<<endl;
                 bufferevent_setcb(bev,readCB,writeCB,eventCB,this);
-                bufferevent_enable(bev,EV_READ|EV_WRITE);
-                cout<<"add event success!"<<endl;
+                cout<<bev<<endl;
+                if(-1==bufferevent_enable(bev,EV_READ)){
+                    cout<<"buffevent_enable faild!"<<endl;
+                }
                 char buf[]="220 connect success!";
                 bufferevent_write(bev,buf,sizeof(buf));
+                cout<<"connect success!"<<endl;
             }
             else{
                 cout<<"bufferevent create failed2"<<endl;

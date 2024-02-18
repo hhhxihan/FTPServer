@@ -10,7 +10,7 @@ class FTPThread{
         void Main();
         void Init();
     private:
-        event_base* base=0;
+        event_base* base;
 };
 
 #endif

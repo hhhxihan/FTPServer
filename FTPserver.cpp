@@ -31,7 +31,7 @@ int main()
     event_base* base=event_base_new(); //创建Libevent事件库
     if(!base) cout<<"event_base create failed"<<endl;
 
-    threadPool=new FTPThreadPool(10);
+    threadPool=new FTPThreadPool(4);
     if(!threadPool) cout<<"threadPool create failed"<<endl;
 
     //设置服务器的地址信息
@@ -40,7 +40,7 @@ int main()
     server_addr.sin_port=htons(21);
     server_addr.sin_family=AF_INET;
 
-    struct evconnlistener* ev=evconnlistener_new_bind(base,callback,NULL, LEV_OPT_REUSEABLE,100,
+    struct evconnlistener* ev=evconnlistener_new_bind(base,callback,base, LEV_OPT_REUSEABLE,100,
                                             (struct sockaddr*)&server_addr,sizeof(server_addr));
     if (!ev) { 
         cout << "evconnlistener create failed: " << evutil_socket_error_to_string( evutil_socket_geterror()) << endl;
