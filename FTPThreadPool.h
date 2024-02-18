@@ -12,7 +12,7 @@ class FTPThreadPool{
         int curNum; //当前线程的下标
         vector<FTPThread> threadVector;
 
-        FTPThreadPool(int num);
+        FTPThreadPool(int num=10);
         void addTask(FTPTask* task);
     private:
         int maxNum; //最大线程数  

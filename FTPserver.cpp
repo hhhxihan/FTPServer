@@ -17,7 +17,6 @@ void callback(struct evconnlistener* evlistener,evutil_socket_t fd,struct sockad
     
     if(!t) cout<<"FTPTask create failed"<<endl;
     t->socketID=fd;
-    cout<<"??"<<endl;
     threadPool->addTask(t);
     //把t分配给一个线程
 }
@@ -49,7 +48,7 @@ int main()
 
     cout<<"start listen..."<<endl;
     event_base_dispatch(base);
-    
+    cout<<"close..."<<endl;
     evconnlistener_free(ev);
     event_base_free(base);
     delete threadPool;
