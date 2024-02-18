@@ -38,6 +38,8 @@ class FTPTask:public Task{
                 bufferevent_setcb(bev,readCB,writeCB,eventCB,this);
                 bufferevent_enable(bev,EV_READ|EV_WRITE);
                 cout<<"add event success!"<<endl;
+                char buf[]="220 connect success!";
+                bufferevent_write(bev,buf,sizeof(buf));
             }
             else{
                 cout<<"bufferevent create failed2"<<endl;
