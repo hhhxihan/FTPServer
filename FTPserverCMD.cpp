@@ -13,7 +13,7 @@ void FTPserverCMD::readcmd(){
     //从一个缓冲事件中读取
     char data[MAXSIZE];
 
-    int len=bufferevent_read(bev,data,sizeof(data)-1);
+    int len=bufferevent_read(_bev,data,sizeof(data)-1);
     if(len<=0) ; //未读取到数据
     data[len]='\0';
     cout<<data<<endl;
@@ -45,6 +45,6 @@ void FTPserverCMD::read(){
 }
 void FTPserverCMD::resPond(string msg){
     cout<<"FTPserverCMD respond！"<<endl;
-    if(!bev) cout<<"bev is null"<<endl;
-    bufferevent_write(bev,msg.c_str(),msg.size());
+    if(!_bev) cout<<"bev is null"<<endl;
+    bufferevent_write(_bev,msg.c_str(),msg.size());
 }

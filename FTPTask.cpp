@@ -10,22 +10,22 @@ using namespace std;
 void FTPTask::resPond(string msg){
     cout<<"FTPTask respond！"<<endl;
     if(!belongTask) cout<<"belongTask is null"<<endl;
-    if(!belongTask->bev) cout<<"bev is null"<<endl;
-    bufferevent_write(belongTask->bev,msg.c_str(),msg.size());
+    if(!belongTask->_bev) cout<<"bev is null"<<endl;
+    bufferevent_write(belongTask->_bev,msg.c_str(),msg.size());
 }
 
 
 void FTPTask::ConnectDataPipe(){
-    bev=bufferevent_socket_new(base,-1,BEV_OPT_CLOSE_ON_FREE);
+    _bev=bufferevent_socket_new(base,-1,BEV_OPT_CLOSE_ON_FREE);
     sockaddr_in sin;
     sin.sin_family=AF_INET;
     sin.sin_port=htons(belongTask->transPort);
     sin.sin_addr.s_addr=inet_addr(belongTask->transIP.c_str());
 
-    bufferevent_setcb(bev,readCB,writeCB,eventCB,this);
-    bufferevent_enable(bev,EV_READ|EV_WRITE);
+    bufferevent_setcb(_bev,readCB,writeCB,eventCB,this);
+    bufferevent_enable(_bev,EV_READ|EV_WRITE);
 
-    bufferevent_socket_connect(bev,(struct sockaddr*)&sin,sizeof(sin));
+    bufferevent_socket_connect(_bev,(struct sockaddr*)&sin,sizeof(sin));
 }
 void FTPTask::getConnInfo(struct sockaddr* address){
     char ipString[INET_ADDRSTRLEN+1];
@@ -36,8 +36,8 @@ void FTPTask::getConnInfo(struct sockaddr* address){
 }
 
 void FTPTask::sendData(string msg){
-    if(bev!=NULL){
-        bufferevent_write(bev,msg.c_str(),msg.size());
+    if(_bev!=NULL){
+        bufferevent_write(_bev,msg.c_str(),msg.size());
     }
     
 }
@@ -45,22 +45,22 @@ void FTPTask::sendData(string msg){
 void FTPTask::readCB(struct bufferevent* bev,void* arg){
     FTPTask* t=static_cast<FTPTask*>(arg);
     if(!t) cout<<"task err"<<endl;
-    t->read();
+    t->read(bev);
 }
 
 void FTPTask::writeCB(struct bufferevent* bev,void* arg){
     FTPTask* t=static_cast<FTPTask*>(arg);
-    t->write();
+    t->write(bev);
 }
 
 void FTPTask::eventCB(struct bufferevent* bev,short event,void* arg){
     FTPTask* t=static_cast<FTPTask*>(arg);
-    t->event(event);
+    t->event(bev,event);
 }
 
 void FTPTask::Closefd(){
-    if(!bev){
-        bufferevent_free(bev);
+    if(!_bev){
+        bufferevent_free(_bev);
     }
     if(!file){
         fclose(file);

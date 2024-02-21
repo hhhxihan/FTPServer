@@ -50,8 +50,8 @@ void CMDSTOR::event(struct bufferevent* bev,short _event){
 }
 
 void CMDSTOR::Closefd(){
-    if(!bev){
-        bufferevent_free(bev);
+    if(!_bev){
+        bufferevent_free(_bev);
     }
     if(outFile.is_open()){
         outFile.close();

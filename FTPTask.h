@@ -34,18 +34,16 @@ class FTPTask:public Task{
             if(!base){
                 cout<<"base is null"<<endl;
             }
-            bev=bufferevent_socket_new(base,socketID,BEV_OPT_CLOSE_ON_FREE);
-            if(bev){
+            _bev=bufferevent_socket_new(base,socketID,BEV_OPT_CLOSE_ON_FREE);
+            if(_bev){
                 cout<<"enter bev process!"<<endl;
-                bufferevent_setcb(bev,readCB,writeCB,eventCB,this);
-                if(-1==bufferevent_enable(bev,EV_READ)){
+                bufferevent_setcb(_bev,readCB,writeCB,eventCB,this);
+                if(-1==bufferevent_enable(_bev,EV_READ)){
                     cout<<"buffevent_enable faild!"<<endl;
                 }
                 char buf[]="220 this is libevent Ftp_Server, Welcome!\r\n";
-                bufferevent_write(bev,buf,sizeof(buf));
-                // char buf2[]="USER\r\n";
-                // bufferevent_write(bev,buf2,sizeof(buf2));
-                ConnectDataPipe();
+                bufferevent_write(_bev,buf,sizeof(buf));
+                
             }
             else{
                 cout<<"bufferevent create failed2"<<endl;
@@ -55,16 +53,16 @@ class FTPTask:public Task{
         }  
 
         virtual void Closefd();
-        virtual void read(){}
-        virtual void write(){}
-        virtual void event(short _event){}
+        virtual void read(bufferevent* bev){}
+        virtual void write(bufferevent* bev){}
+        virtual void event(struct bufferevent* bev,short _event){}
 
     protected:
         static void readCB(struct bufferevent* bev,void* arg);   //读事件的回调函数
         static void writeCB(struct bufferevent* bev,void* arg);  //写事件的回调函数
         static void eventCB(struct bufferevent* bev,short event,void* arg);  //出错时的回调函数
 
-        struct bufferevent* bev;  //task中的一个传输控制命令的socket
+        struct bufferevent* _bev;  //task中的一个传输控制命令的socket
         
         int threadID; //所属线程ID；
         bool dataPipeConn;
