@@ -17,6 +17,7 @@ void callback(struct evconnlistener* evlistener,evutil_socket_t fd,struct sockad
     
     if(!t) cout<<"FTPTask create failed"<<endl;
     t->socketID=fd;
+    t->getConnInfo(address);
     threadPool->addTask(t);
     //把t分配给一个线程
 }
@@ -24,10 +25,6 @@ void callback(struct evconnlistener* evlistener,evutil_socket_t fd,struct sockad
 int main()
 {
 
-    
-    FTPTask* t=new FTPTask();
-    if(!t) cout<<"err:new failed"<<endl;
-    
     event_base* base=event_base_new(); //创建Libevent事件库
     if(!base) cout<<"event_base create failed"<<endl;
 
@@ -52,7 +49,7 @@ int main()
     evconnlistener_free(ev);
     event_base_free(base);
     delete threadPool;
-    delete t;
+
 }
 
 

@@ -7,6 +7,7 @@
 #include "CMDWD.cpp"
 #include "CMDSTOR.h"
 #include "CMDRETR.h"
+#include "CMDOPT.h"
 //单例模式的工厂
 
 class CloneFactory{
@@ -27,6 +28,7 @@ class CloneFactory{
 
         TaskCMD->registerCMD("STOR",new CMDSTOR());
         TaskCMD->registerCMD("RETR",new CMDRETR());
+        TaskCMD->registerCMD("OPTS",new CMDOPT());
 
         return TaskCMD;
     }

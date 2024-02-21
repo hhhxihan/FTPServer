@@ -15,15 +15,16 @@ class FTPTask:public Task{
         std::string rootDir=".";     //当前目录的相对路径
 
         std::string transIP="";
-        int transPort=0;
+        int transPort=20;
 
         FTPTask* belongTask;
         event_base* base; //Libevent库int
         evutil_socket_t  socketID; 
+        void getConnInfo(struct sockaddr* address);
 
         virtual void processCMD(string cmd,string msg){}; //用于处理命令
         
-        void resPond(string msg); //回复命令
+        virtual void resPond(string msg); //回复命令
 
         void ConnectDataPipe();
 
@@ -33,18 +34,18 @@ class FTPTask:public Task{
             if(!base){
                 cout<<"base is null"<<endl;
             }
-            struct bufferevent* bev=bufferevent_socket_new(base,socketID,BEV_OPT_CLOSE_ON_FREE);
+            bev=bufferevent_socket_new(base,socketID,BEV_OPT_CLOSE_ON_FREE);
             if(bev){
                 cout<<"enter bev process!"<<endl;
                 bufferevent_setcb(bev,readCB,writeCB,eventCB,this);
-                cout<<"set callback success!"<<bev<<endl;
                 if(-1==bufferevent_enable(bev,EV_READ)){
                     cout<<"buffevent_enable faild!"<<endl;
                 }
-                cout<<"buffevent_enable success!"<<endl;
-                char buf[]="220 connect success!";
+                char buf[]="220 this is libevent Ftp_Server, Welcome!\r\n";
                 bufferevent_write(bev,buf,sizeof(buf));
-                cout<<"connect success!"<<endl;
+                // char buf2[]="USER\r\n";
+                // bufferevent_write(bev,buf2,sizeof(buf2));
+                ConnectDataPipe();
             }
             else{
                 cout<<"bufferevent create failed2"<<endl;
@@ -53,11 +54,10 @@ class FTPTask:public Task{
             return 0;
         }  
 
-        void virtual Closefd();
-
-        void virtual read(struct bufferevent* bev){}
-        void virtual write(struct bufferevent* bev){}
-        void virtual event(struct bufferevent* bev,short _event){}
+        virtual void Closefd();
+        virtual void read(){}
+        virtual void write(){}
+        virtual void event(short _event){}
 
     protected:
         static void readCB(struct bufferevent* bev,void* arg);   //读事件的回调函数
@@ -67,6 +67,7 @@ class FTPTask:public Task{
         struct bufferevent* bev;  //task中的一个传输控制命令的socket
         
         int threadID; //所属线程ID；
+        bool dataPipeConn;
         
         FILE* file;
 };

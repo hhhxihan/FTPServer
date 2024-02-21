@@ -8,6 +8,9 @@
 using namespace std;
 
 void FTPTask::resPond(string msg){
+    cout<<"FTPTask respond！"<<endl;
+    if(!belongTask) cout<<"belongTask is null"<<endl;
+    if(!belongTask->bev) cout<<"bev is null"<<endl;
     bufferevent_write(belongTask->bev,msg.c_str(),msg.size());
 }
 
@@ -24,6 +27,13 @@ void FTPTask::ConnectDataPipe(){
 
     bufferevent_socket_connect(bev,(struct sockaddr*)&sin,sizeof(sin));
 }
+void FTPTask::getConnInfo(struct sockaddr* address){
+    char ipString[INET_ADDRSTRLEN+1];
+    struct sockaddr_in* addr_in = (struct sockaddr_in*)address;
+    inet_ntop(AF_INET, &(addr_in->sin_addr), ipString, INET_ADDRSTRLEN);
+    int port = ntohs(addr_in->sin_port);
+    transIP=string(ipString);
+}
 
 void FTPTask::sendData(string msg){
     if(bev!=NULL){
@@ -34,18 +44,18 @@ void FTPTask::sendData(string msg){
 
 void FTPTask::readCB(struct bufferevent* bev,void* arg){
     FTPTask* t=static_cast<FTPTask*>(arg);
-    cout<<"new command!"<<endl;
-    t->read(bev);
+    if(!t) cout<<"task err"<<endl;
+    t->read();
 }
 
 void FTPTask::writeCB(struct bufferevent* bev,void* arg){
     FTPTask* t=static_cast<FTPTask*>(arg);
-    t->write(bev);
+    t->write();
 }
 
 void FTPTask::eventCB(struct bufferevent* bev,short event,void* arg){
     FTPTask* t=static_cast<FTPTask*>(arg);
-    t->event(bev,event);
+    t->event(event);
 }
 
 void FTPTask::Closefd(){
