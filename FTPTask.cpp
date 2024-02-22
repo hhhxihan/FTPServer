@@ -14,13 +14,24 @@ void FTPTask::resPond(string msg){
     bufferevent_write(belongTask->_bev,msg.c_str(),msg.size());
 }
 
+ void FTPTask::setIP(struct sockaddr* address){
+    	char ipString[INET_ADDRSTRLEN];
+        struct sockaddr_in* addr_in = (struct sockaddr_in*)address;
+        inet_ntop(AF_INET, &(addr_in->sin_addr), ipString, INET_ADDRSTRLEN);
+        transIP=string(ipString);
+        transPort= 20;
+ }
+
 
 void FTPTask::ConnectDataPipe(){
+    if(!base) cout<<"base is null"<<endl;
     _bev=bufferevent_socket_new(base,-1,BEV_OPT_CLOSE_ON_FREE);
+    if(!_bev) cout<<"bev create failed!"<<endl;
     sockaddr_in sin;
     sin.sin_family=AF_INET;
     sin.sin_port=htons(belongTask->transPort);
     sin.sin_addr.s_addr=inet_addr(belongTask->transIP.c_str());
+    cout<<"connect "<<belongTask->transIP<<":"<<belongTask->transPort<<endl;
 
     bufferevent_setcb(_bev,readCB,writeCB,eventCB,this);
     bufferevent_enable(_bev,EV_READ|EV_WRITE);

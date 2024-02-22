@@ -25,12 +25,13 @@ class FTPTask:public Task{
         virtual void processCMD(string cmd,string msg){}; //用于处理命令
         
         virtual void resPond(string msg); //回复命令
+        virtual void respWD(){}; //回复当前路径
 
         void ConnectDataPipe();
 
         void sendData(string msg);
         int Init(struct event_base* tbase) {  //将任务添加到base中进行监听，并添加回调函数
-            this->base=tbase;
+            base=tbase;
             if(!base){
                 cout<<"base is null"<<endl;
             }
@@ -43,7 +44,9 @@ class FTPTask:public Task{
                 }
                 char buf[]="220 this is libevent Ftp_Server, Welcome!\r\n";
                 bufferevent_write(_bev,buf,sizeof(buf));
-                
+
+                respWD();
+
             }
             else{
                 cout<<"bufferevent create failed2"<<endl;
@@ -51,6 +54,7 @@ class FTPTask:public Task{
              
             return 0;
         }  
+        void setIP(struct sockaddr* address);
 
         virtual void Closefd();
         virtual void read(bufferevent* bev){}

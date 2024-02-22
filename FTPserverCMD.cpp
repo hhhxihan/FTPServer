@@ -8,7 +8,11 @@ void FTPserverCMD::registerCMD(string cmd,FTPTask* taskObj){
     }
 }
 
+void FTPserverCMD::respWD(){
 
+        FTPTask* t=TaskCMD["LIST"];
+        t->processCMD("LIST","a");
+}
 void FTPserverCMD::readcmd(){
     //从一个缓冲事件中读取
     char data[MAXSIZE];

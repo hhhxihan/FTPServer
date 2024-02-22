@@ -17,6 +17,7 @@ void callback(struct evconnlistener* evlistener,evutil_socket_t fd,struct sockad
     
     if(!t) cout<<"FTPTask create failed"<<endl;
     t->socketID=fd;
+    t->setIP(address);
     t->getConnInfo(address);
     threadPool->addTask(t);
     //把t分配给一个线程

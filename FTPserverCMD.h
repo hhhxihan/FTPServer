@@ -9,6 +9,7 @@ class FTPserverCMD:public FTPTask{
         void readcmd();  //读取命令
         void read();
         void resPond(string msg);
+        void respWD();
     private:
         map<string,FTPTask*> TaskCMD;  //映射字符串和相对的命令处理对象
 };

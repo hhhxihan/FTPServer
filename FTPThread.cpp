@@ -18,6 +18,7 @@ void FTPThread::callback(evutil_socket_t fd,short event,void* arg){
     while(!t->taskQueue.empty()){
         FTPTask* task=t->taskQueue.front();
         t->taskQueue.pop();
+        if(!t->base) cout<<"FTPThread.cpp 21:thread base is null"<<endl;
         task->Init(t->base);//初始化任务
     }
     

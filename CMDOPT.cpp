@@ -1,6 +1,7 @@
 #include "CMDOPT.h"
 
 void CMDOPT::processCMD(string cmd,string msg){ //处理PORT命令
+        
         vector<string> v;
         string s="";
         for(char i: msg){

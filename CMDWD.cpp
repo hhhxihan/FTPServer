@@ -4,6 +4,7 @@
 class CMDWD:public FTPTask{
     public:
         void processCMD(string cmd,string msg){
+            base=belongTask->base;
             if (cmd=="CWD")
             {
                 int pos=msg.find(" ");
