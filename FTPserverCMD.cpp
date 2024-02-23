@@ -44,7 +44,7 @@ void FTPserverCMD::readcmd(){
 
 }
 
-void FTPserverCMD::read(){
+void FTPserverCMD::read(bufferevent* bev){
     readcmd();
 }
 void FTPserverCMD::resPond(string msg){

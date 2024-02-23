@@ -11,7 +11,7 @@ using namespace std;
 
 class FTPTask:public Task{
     public:
-        std::string currentDir="/";  //目录的绝对路径
+        std::string currentDir="/home/liu";  //目录的绝对路径
         std::string rootDir=".";     //当前目录的相对路径
 
         std::string transIP="";

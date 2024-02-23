@@ -7,7 +7,7 @@ class FTPserverCMD:public FTPTask{
     public:
         void registerCMD(string cmd,FTPTask* taskObj); //关联命令和命令处理对象
         void readcmd();  //读取命令
-        void read();
+        void read(bufferevent* bev);
         void resPond(string msg);
         void respWD();
     private:
