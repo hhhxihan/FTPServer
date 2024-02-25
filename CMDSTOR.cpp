@@ -7,7 +7,7 @@ void CMDSTOR::processCMD(string cmd,string msg){
     
 
     int pos=msg.find(" ");
-    msg=msg.substr(pos+1,msg.size()-pos-2); //去掉末尾的\r\n
+    msg=msg.substr(pos+1,msg.size()-pos-3); //去掉末尾的\r\n
     std::filesystem::path _path(msg.c_str());
 
     string _p=_path.string();
@@ -36,11 +36,9 @@ void CMDSTOR::processCMD(string cmd,string msg){
     char buf[MAXSIZE]="220 able to accept file";
     send(sockfd,buf,sizeof(buf),0);
 
+    ConnectDataPipe();
     bufferevent_disable(_bev,EV_READ);
     evutil_socket_t datafd=bufferevent_getfd(_bev);
-
-    
-    ConnectDataPipe();
     recv(sockfd,buf,sizeof(buf),0);
     int len=std::stoi(buf);
     int recvSize=0;
