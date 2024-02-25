@@ -4,6 +4,8 @@
 #define MAXSIZE 100
 
 void CMDSTOR::processCMD(string cmd,string msg){
+    
+
     int pos=msg.find(" ");
     msg=msg.substr(pos+1,msg.size()-pos-2); //去掉末尾的\r\n
     std::filesystem::path _path(msg.c_str());
@@ -29,7 +31,27 @@ void CMDSTOR::processCMD(string cmd,string msg){
     std::filesystem::path filePath(belongTask->currentDir);
     outFile=std::ofstream(filePath);
 
+    bufferevent_disable(belongTask->_bev,EV_READ); //关闭主事件的监听
+    evutil_socket_t sockfd=bufferevent_getfd(belongTask->_bev);
+    char buf[MAXSIZE]="220 able to accept file";
+    send(sockfd,buf,sizeof(buf),0);
+
+    bufferevent_disable(_bev,EV_READ);
+    evutil_socket_t datafd=bufferevent_getfd(_bev);
+
+    
     ConnectDataPipe();
+    recv(sockfd,buf,sizeof(buf),0);
+    int len=std::stoi(buf);
+    int recvSize=0;
+    while(recvSize<len){
+        recvSize+=recv(datafd,buf,sizeof(buf),0);
+        outFile<<buf;
+    }
+
+    Closefd();
+    bufferevent_enable(belongTask->_bev,EV_READ);
+    // bufferevent_enable(_bev,EV_READ);
 }
 
 void CMDSTOR::read(struct bufferevent* bev){

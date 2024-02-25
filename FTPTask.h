@@ -11,7 +11,7 @@ using namespace std;
 
 class FTPTask:public Task{
     public:
-        std::string currentDir="/home/liu";  //目录的绝对路径
+        std::string currentDir="/home";  //目录的绝对路径
         std::string rootDir=".";     //当前目录的相对路径
 
         std::string transIP="";
@@ -20,6 +20,7 @@ class FTPTask:public Task{
         FTPTask* belongTask;
         event_base* base; //Libevent库int
         evutil_socket_t  socketID; 
+        struct bufferevent* _bev;  //task中的一个传输控制命令的socket
         void getConnInfo(struct sockaddr* address);
 
         virtual void processCMD(string cmd,string msg){}; //用于处理命令
@@ -66,7 +67,7 @@ class FTPTask:public Task{
         static void writeCB(struct bufferevent* bev,void* arg);  //写事件的回调函数
         static void eventCB(struct bufferevent* bev,short event,void* arg);  //出错时的回调函数
 
-        struct bufferevent* _bev;  //task中的一个传输控制命令的socket
+        
         
         int threadID; //所属线程ID；
         bool dataPipeConn;

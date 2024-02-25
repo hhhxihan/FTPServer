@@ -30,14 +30,14 @@ class CMDWD:public FTPTask{
                 resPond(curDir);
             }
             else if(cmd=="CDUP"){  //返回上一级目录
-                string path=currentDir;
+                string path=belongTask->currentDir;
                 if(path[path.size()-1]=='/'){
                     path=path.substr(0,path.size()-1);
                 }
                 int pos=path.rfind("/");
                 path=path.substr(0,pos);
                 belongTask->currentDir=path;
-
+                processCMD("LIST","a"); //切换路径后，还要列出文件返回
                 resPond("CDUP success!");
             }
             else if(cmd=="LIST"){ //List要用数据通道发送
@@ -47,7 +47,7 @@ class CMDWD:public FTPTask{
                 ConnectDataPipe();
                 string result;
                 string _Command;
-                cout<<"CMD.cpp 21:workDir:"<<belongTask->currentDir<<endl;
+                cout<<"CMD.cpp 50:workDir:"<<belongTask->currentDir<<endl;
                 _Command.append("ls "+belongTask->currentDir);
                 file=popen(_Command.c_str(),"r");
                 char buf[100];
@@ -75,8 +75,9 @@ class CMDWD:public FTPTask{
                 }
                 v.pop_back();
                 sendData(js.dump()+"\r\n");
+                Closefd();
             }
-            Closefd();
+            
         }
         
         void event(struct bufferevent* bev, short what){

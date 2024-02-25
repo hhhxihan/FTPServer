@@ -1,6 +1,7 @@
 #include "FTPTask.h"
 #include <fstream>
 #include <filesystem>
+#define MAXSIZE 1024
 
 class CMDRETR:public FTPTask{
     public:

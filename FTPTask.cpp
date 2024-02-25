@@ -8,7 +8,7 @@
 using namespace std;
 
 void FTPTask::resPond(string msg){
-    cout<<"FTPTask respond！"<<endl;
+    cout<<"FTPTask respond:"<<msg<<endl;
     if(!belongTask) cout<<"belongTask is null"<<endl;
     if(!belongTask->_bev) cout<<"bev is null"<<endl;
     bufferevent_write(belongTask->_bev,msg.c_str(),msg.size());

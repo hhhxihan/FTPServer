@@ -2,12 +2,12 @@
 
 void CMDRETR::processCMD(string cmd,string msg){
     int pos=msg.find(" ");
-    msg=msg.substr(pos+1,msg.size()-pos-2); //去掉末尾的\r\n
+    msg=msg.substr(pos+1,msg.size()-pos-3); //去掉末尾的\r\n
     std::filesystem::path _path(msg.c_str());
 
     string _p=_path.string();
 
-    if(!_p.empty()){ //有父目录
+    if(!_p.empty()){ 
         if(belongTask->currentDir.at(belongTask->currentDir.size()-1)!='/'){
             belongTask->currentDir+="/";
         }
@@ -21,12 +21,33 @@ void CMDRETR::processCMD(string cmd,string msg){
         else{
             belongTask->currentDir+=_p;
         }
+        cout<<"The file is:"<<belongTask->currentDir;
     }
 
     std::filesystem::path filePath(belongTask->currentDir);
-    File=std::ifstream(filePath);
+    File=std::ifstream(filePath,std::ios::binary | std::ios::ate);
+    std::streampos size=File.tellg();
+    std::streamoff tsize=static_cast<streamoff>(size);
+    string fileLen=std::to_string(tsize);
+    resPond(fileLen);
+    
+    bufferevent_disable(belongTask->_bev,EV_READ);
+    evutil_socket_t _fd=bufferevent_getfd(belongTask->_bev);
+    char buf[MAXSIZE];
+    recv(_fd,buf,sizeof(buf),0);
 
-    ConnectDataPipe();
+    ConnectDataPipe(); //连接数据通道
+    File.seekg(0,ios::beg);
+    //传输数据
+    int sendSize=0;
+    
+    while((sendSize=File.readsome(buf,MAXSIZE))>0){
+        sendData(buf);
+    }
+
+    bufferevent_enable(belongTask->_bev,EV_READ);
+    Closefd(); //关闭连接
+    //传输完后还要回复currentdir
 }
 
 void CMDRETR::read(struct bufferevent* bev){

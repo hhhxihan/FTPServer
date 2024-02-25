@@ -41,6 +41,7 @@ void FTPserverCMD::readcmd(){
     else{ //没有找到相应的命令时的处理方式
         resPond("202 command failed");
     }
+    
 
 }
 

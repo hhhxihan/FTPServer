@@ -25,6 +25,7 @@ class CloneFactory{
         TaskCMD->registerCMD("LIST",wd);
         TaskCMD->registerCMD("PWD",wd);
         TaskCMD->registerCMD("CWD",wd);
+        TaskCMD->registerCMD("CDUP",wd);
         
 
         TaskCMD->registerCMD("STOR",new CMDSTOR());
