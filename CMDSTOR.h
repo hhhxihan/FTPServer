@@ -1,8 +1,14 @@
 #include "FTPTask.h"
 #include <fstream>
 #include <arpa/inet.h>
-#include <sys/socket.h>
 #include <netinet/in.h>
+#include <filesystem>
+#include <sys/socket.h>
+#include <stdlib.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <cstring>
+#include <errno.h>
 
 class CMDSTOR:public FTPTask{
     public:
