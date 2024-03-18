@@ -2,6 +2,7 @@
 #define FTPTASK_H
 
 #include "Task.h"
+#include "utils.h"
 #include <string>
 #include <iostream>
 #include <event2/event.h>
@@ -15,6 +16,7 @@ class FTPTask:public Task{
         std::string rootDir=".";     //当前目录的相对路径
 
         std::string transIP="";
+        int transMode=ACTIVEMODE;
         int transPort=20;
 
         FTPTask* belongTask;

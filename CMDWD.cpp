@@ -27,7 +27,7 @@ class CMDWD:public FTPTask{
             }
             else if(cmd=="PWD"){
                 string curDir=belongTask->currentDir;
-                resPond(curDir);
+                resPond("257 \""+curDir+"\" is the current directory\r\n");
             }
             else if(cmd=="CDUP"){  //返回上一级目录
                 string path=belongTask->currentDir;
@@ -75,6 +75,7 @@ class CMDWD:public FTPTask{
                 }
                 v.pop_back();
                 sendData(js.dump()+"\r\n");
+                pclose(file);
                 Closefd();
             }
             

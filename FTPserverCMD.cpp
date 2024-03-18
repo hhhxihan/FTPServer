@@ -20,7 +20,6 @@ void FTPserverCMD::readcmd(){
     int len=bufferevent_read(_bev,data,sizeof(data)-1);
     if(len<=0) ; //未读取到数据
     data[len]='\0';
-    cout<<data<<endl;
 
     string Command="";
     for(char i:data){
@@ -36,7 +35,6 @@ void FTPserverCMD::readcmd(){
 			t->base = base;
 			t->belongTask=this; //所属的CMD对象
 			t->processCMD(Command, data);
-
     }
     else{ //没有找到相应的命令时的处理方式
         resPond("202 command failed");
@@ -48,7 +46,9 @@ void FTPserverCMD::readcmd(){
 void FTPserverCMD::read(bufferevent* bev){
     readcmd();
 }
-// void FTPserverCMD::resPond(string msg){
-//     if(!_bev) cout<<"bev is null"<<endl;
-//     bufferevent_write(_bev,msg.c_str(),msg.size());
-// }
+void FTPserverCMD::resPond(string msg){  //这里不使用FTPTask中的resPond，因为那个是调用belongtask->bev；
+    if(!_bev) {
+        cout<<"bev is null"<<endl;
+        bufferevent_write(_bev,msg.c_str(),msg.size());
+    }
+}

@@ -9,6 +9,7 @@
 #include "CMDRETR.h"
 #include "CMDOPT.h"
 #include "CMDUSER.h"
+#include "CMDTYPE.h"
 //单例模式的工厂
 
 class CloneFactory{
@@ -21,21 +22,30 @@ class CloneFactory{
     }
     FTPTask* createTask(){
         FTPserverCMD* TaskCMD=new FTPserverCMD();
+
         TaskCMD->registerCMD("PORT",new CMDPORT());
+
         FTPTask* wd=new CMDWD();
-        
         TaskCMD->registerCMD("LIST",wd);
         TaskCMD->registerCMD("PWD",wd);
         TaskCMD->registerCMD("CWD",wd);
         TaskCMD->registerCMD("CDUP",wd);
 
         FTPTask* user=new CMDUSER();
-        TaskCMD->registerCMD("USER",wd);
-        TaskCMD->registerCMD("PASS",wd);
+        TaskCMD->registerCMD("USER",user);
+        TaskCMD->registerCMD("PASS",user);
+
+        FTPTask* opt=new CMDOPT();
+        TaskCMD->registerCMD("SYST",opt);
+        TaskCMD->registerCMD("FEAT",opt);
+
+        TaskCMD->registerCMD("TYPE",new CMDTYPE());
         
         TaskCMD->registerCMD("STOR",new CMDSTOR());
         TaskCMD->registerCMD("RETR",new CMDRETR());
         TaskCMD->registerCMD("OPTS",new CMDOPT());
+
+        
 
         return TaskCMD;
     }
