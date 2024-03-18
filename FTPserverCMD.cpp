@@ -49,7 +49,6 @@ void FTPserverCMD::read(bufferevent* bev){
     readcmd();
 }
 void FTPserverCMD::resPond(string msg){
-    cout<<"FTPserverCMD respond！"<<endl;
     if(!_bev) cout<<"bev is null"<<endl;
     bufferevent_write(_bev,msg.c_str(),msg.size());
 }

@@ -38,7 +38,7 @@ class CMDWD:public FTPTask{
                 path=path.substr(0,pos);
                 belongTask->currentDir=path;
                 processCMD("LIST","a"); //切换路径后，还要列出文件返回
-                resPond("CDUP success!");
+                resPond("220 CDUP success!");//回复消息  
             }
             else if(cmd=="LIST"){ //List要用数据通道发送
                 transIP=belongTask->transIP;
