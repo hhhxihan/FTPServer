@@ -33,10 +33,17 @@ class CMDPORT:public FTPTask{
 
                 // 定义一个随机数分布
                 std::uniform_int_distribution<> dis(160, 200); // 生成 1 到 100 之间的整数
-                
-
                 // 生成随机数
                 int random_number = dis(gen);
+                belongTask->transPort=random_number*256;
+                string tcmd="ifconfig | grep -Eo 'inet (addr:)?([0-9]*\\.){3}[0-9]*' | grep -Eo '([0-9]*\\.){3}[0-9]*' | grep -v '127.0.0.1'";
+                file=popen(tcmd.c_str(),"r");
+                char buf[100];
+                fgets(buf,100,file);
+                string respStr(buf);
+                respStr+=","+std::to_string(belongTask->transPort)+",0)\r\n";
+                for(char& c:respStr) if(c=='.') c=',';
+                resPond("227 Entering Passive Mode ("+respStr);
             }
             
         }

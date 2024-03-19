@@ -1,3 +1,5 @@
+#ifndef FTPSERVERCMD_H
+#define FTPSERVERCMD_H
 #include "FTPTask.h"
 #include <map>
 #include <string>
@@ -13,5 +15,6 @@ class FTPserverCMD:public FTPTask{
 
         map<string,FTPTask*> TaskCMD;  //映射字符串和相对的命令处理对象
 };
+#endif
 
 
