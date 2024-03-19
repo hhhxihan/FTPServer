@@ -36,8 +36,13 @@ void CMDSTOR::processCMD(string cmd,string msg){
     if(-1==send(sockfd,buf,sizeof(buf),0)){
         cout<<"send faild!"<<endl;
     }
-
-    ConnectDataPipe();
+    if(belongTask->transMode==ACTIVEMODE){
+        ConnectDataPipe(); //主动连接
+    }
+    else{  //被动连接
+        auto it=reinterpret_cast<FTPserverCMD*>(belongTask);
+        _bev=it->TaskCMD["PASS"]->_bev;
+    }
 
     if ( fcntl(sockfd, F_SETFL, 0)== -1) {
         std::perror("Error setting socket option");
@@ -59,7 +64,7 @@ void CMDSTOR::processCMD(string cmd,string msg){
     fcntl(sockfd, F_SETFL, newSocketFlag);
 
     bufferevent_enable(belongTask->_bev,EV_READ);
-    cout<<"end of STOR"<<endl;
+    
 }
 
 void CMDSTOR::read(struct bufferevent* bev){

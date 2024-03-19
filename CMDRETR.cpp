@@ -31,7 +31,7 @@ void CMDRETR::processCMD(string cmd,string msg){
     string fileLen=std::to_string(tsize);
     resPond(fileLen);
     
-    bufferevent_disable(belongTask->_bev,EV_READ);
+    bufferevent_disable(belongTask->_bev,EV_READ); //
     evutil_socket_t _fd=bufferevent_getfd(belongTask->_bev);
     char buf[MAXSIZE];
     recv(_fd,buf,sizeof(buf),0);

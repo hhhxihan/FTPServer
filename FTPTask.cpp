@@ -21,8 +21,28 @@ void FTPTask::resPond(string msg){
         transIP=string(ipString);
         transPort= 20;
  }
+void FTPTask::passConnCallback(struct evconnlistener* listener,int fd,sockaddr* addr,int socklen,void* arg){
+    FTPTask* t=reinterpret_cast<FTPTask*>(arg);
+    t->_bev=bufferevent_socket_new(t->base,fd,BEV_OPT_CLOSE_ON_FREE);
 
+    bufferevent_setcb(t->_bev,readCB,writeCB,eventCB,t);
+    bufferevent_enable(t->_bev,EV_READ|EV_WRITE);
+    cout<<"PASSCONNectSucess"<<endl;
+}
+void FTPTask::PassConnect(){
+    if(!base) cout<<"base is null"<<endl;
+    _bev=bufferevent_socket_new(base,-1,BEV_OPT_CLOSE_ON_FREE);
+    if(!_bev) cout<<"bev create failed!"<<endl;
+    sockaddr_in sin;
+    sin.sin_family=AF_INET;
+    sin.sin_port=htons(belongTask->transPort);
+    sin.sin_addr.s_addr=INADDR_ANY;
 
+    ev=evconnlistener_new_bind(base,passConnCallback,NULL, LEV_OPT_REUSEABLE,100,
+                                            (struct sockaddr*)&sin,sizeof(sin));
+
+    evconnlistener_enable(ev);
+}
 void FTPTask::ConnectDataPipe(){
     if(!base) cout<<"base is null"<<endl;
     _bev=bufferevent_socket_new(base,-1,BEV_OPT_CLOSE_ON_FREE);

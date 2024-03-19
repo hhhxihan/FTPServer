@@ -3,6 +3,7 @@
 #include <vector>
 #include <event2/util.h>
 #include <cstring>
+#include "FTPserverCMD.h"
 #include <iostream>
 #include "json.hpp"
 using json=nlohmann::json;
@@ -44,20 +45,32 @@ class CMDWD:public FTPTask{
                 transIP=belongTask->transIP;
                 transPort=belongTask->transPort;
 
-                ConnectDataPipe();
+                if(belongTask->transMode==ACTIVEMODE){
+                    ConnectDataPipe(); //主动连接
+                }
+                else{  //被动连接
+                    auto it=reinterpret_cast<FTPserverCMD*>(belongTask);
+                    _bev=it->TaskCMD["PASS"]->_bev; //获取到数据通道的套接字
+                }
+
                 string result;
                 string _Command;
                 cout<<"CMD.cpp 50:workDir:"<<belongTask->currentDir<<endl;
                 _Command.append("ls "+belongTask->currentDir);
                 file=popen(_Command.c_str(),"r");
                 char buf[100];
+
+                //读取数据
                 if(file){
                     while(fgets(buf,100,file)!=NULL){
                         result+=buf;
+                        result+="\r\n";
                     }
                 }
                 if(!result.size()) cout<<"CMDWD.cpp 52:respondMsg is null"<<endl;
-                cout<<"the string is:"<<result<<endl;
+                
+                #ifdef DEBUG_QT_JSON
+                //编写格式，json格式：
                 std::vector<string> v;
                 v.push_back("");
                 int j=0;
@@ -75,6 +88,9 @@ class CMDWD:public FTPTask{
                 }
                 v.pop_back();
                 sendData(js.dump()+"\r\n");
+                #endif
+                sendData(result);
+
                 pclose(file);
                 Closefd();
             }

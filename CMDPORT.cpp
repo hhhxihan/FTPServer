@@ -1,5 +1,6 @@
 #include "FTPTask.h"
 #include <vector>
+#include <random>
 using namespace std;
 
 
@@ -27,6 +28,15 @@ class CMDPORT:public FTPTask{
                 belongTask->transMode=PASVMODE;
                 //随机生成端口号
                 //获取到自己的IP地址
+                std::random_device rd;
+                std::mt19937 gen(rd()); // 使用 Mersenne Twister 算法
+
+                // 定义一个随机数分布
+                std::uniform_int_distribution<> dis(160, 200); // 生成 1 到 100 之间的整数
+                
+
+                // 生成随机数
+                int random_number = dis(gen);
             }
             
         }

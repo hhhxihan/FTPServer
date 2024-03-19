@@ -1,6 +1,7 @@
 #include "FTPTask.h"
 #include <fstream>
 #include <arpa/inet.h>
+#include "FTPserverCMD.h"
 #include <netinet/in.h>
 #include <filesystem>
 #include <sys/socket.h>
