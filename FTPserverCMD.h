@@ -12,6 +12,7 @@ class FTPserverCMD:public FTPTask{
         void read(bufferevent* bev);
         void resPond(string msg);
         void respWD();
+        void pasvCMD();
 
         map<string,FTPTask*> TaskCMD;  //映射字符串和相对的命令处理对象
 };

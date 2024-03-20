@@ -2,10 +2,12 @@
 #include <iostream>
 #include <event2/event.h>
 #include <event2/bufferevent.h>
+#include "FTPserverCMD.h"
 #include <arpa/inet.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
 using namespace std;
+class FTPserverCMD;
 
 void FTPTask::resPond(string msg){
     cout<<"FTPTask respond:"<<msg<<endl;
@@ -22,14 +24,21 @@ void FTPTask::resPond(string msg){
         transPort= 20;
  }
 void FTPTask::passConnCallback(struct evconnlistener* listener,int fd,sockaddr* addr,int socklen,void* arg){
+    cout<<"new data connect"<<endl;
     FTPTask* t=reinterpret_cast<FTPTask*>(arg);
-    t->_bev=bufferevent_socket_new(t->base,fd,BEV_OPT_CLOSE_ON_FREE);
+    t->_bev=bufferevent_socket_new(t->belongTask->base,fd,BEV_OPT_CLOSE_ON_FREE);
 
     bufferevent_setcb(t->_bev,readCB,writeCB,eventCB,t);
     bufferevent_enable(t->_bev,EV_READ|EV_WRITE);
-    cout<<"PASSCONNectSucess"<<endl;
+
+    FTPserverCMD* CMDTask=reinterpret_cast<FTPserverCMD*>(t->belongTask);
+    //  调用处理函数
+    t->resPond("150 Here comes the directory listing.\r\n");
+    CMDTask->pasvCMD();
+    CMDTask->waitConn=0;
 }
-void FTPTask::PassConnect(){
+void FTPTask::pasvConnect(){
+    belongTask->waitConn=1;
     if(!base) cout<<"base is null"<<endl;
     _bev=bufferevent_socket_new(base,-1,BEV_OPT_CLOSE_ON_FREE);
     if(!_bev) cout<<"bev create failed!"<<endl;
@@ -38,7 +47,7 @@ void FTPTask::PassConnect(){
     sin.sin_port=htons(belongTask->transPort);
     sin.sin_addr.s_addr=INADDR_ANY;
 
-    ev=evconnlistener_new_bind(base,passConnCallback,NULL, LEV_OPT_REUSEABLE,100,
+    ev=evconnlistener_new_bind(base,passConnCallback,this, LEV_OPT_REUSEABLE,100,
                                             (struct sockaddr*)&sin,sizeof(sin));
 
     evconnlistener_enable(ev);

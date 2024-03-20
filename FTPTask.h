@@ -19,6 +19,9 @@ class FTPTask:public Task{
         std::string transIP="";
         int transMode=ACTIVEMODE;
         int transPort=20;
+        
+        int waitConn=0;
+        std::string storeCMD[2];
 
         FTPTask* belongTask;
         event_base* base; //Libevent库int
@@ -33,7 +36,7 @@ class FTPTask:public Task{
         virtual void respWD(){}; //回复当前路径
 
         void ConnectDataPipe(); //主动链接
-        void PassConnect(); //被动连接
+        void pasvConnect(); //被动连接
 
         void sendData(string msg);
         int Init(struct event_base* tbase) {  //将任务添加到base中进行监听，并添加回调函数
@@ -51,7 +54,7 @@ class FTPTask:public Task{
                 char buf[]="220 this is libevent Ftp_Server, Welcome!\r\n";
                 bufferevent_write(_bev,buf,sizeof(buf));
 
-                respWD();
+                // respWD();
 
             }
             else{

@@ -8,6 +8,7 @@ class CMDPORT:public FTPTask{
     public:
         void processCMD(string cmd,string msg){ //处理PORT命令
             if(cmd=="PORT"){
+                belongTask->transMode=ACTIVEMODE;
                 vector<string> v;
                 string s="";
                 for(char i: msg){
@@ -25,6 +26,7 @@ class CMDPORT:public FTPTask{
                 belongTask->transPort=this->transPort;
             }
             else if(cmd=="PASV"){
+                belongTask->waitConn=1;
                 belongTask->transMode=PASVMODE;
                 //随机生成端口号
                 //获取到自己的IP地址
@@ -40,9 +42,11 @@ class CMDPORT:public FTPTask{
                 file=popen(tcmd.c_str(),"r");
                 char buf[100];
                 fgets(buf,100,file);
+                pclose(file);
                 string respStr(buf);
-                respStr+=","+std::to_string(belongTask->transPort)+",0)\r\n";
-                for(char& c:respStr) if(c=='.') c=',';
+                for(char& c:respStr) if(c=='.'||c=='\n') c=',';
+                respStr+=std::to_string(random_number)+",0)\r\n";
+                pasvConnect();
                 resPond("227 Entering Passive Mode ("+respStr);
             }
             

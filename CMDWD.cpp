@@ -24,7 +24,8 @@ class CMDWD:public FTPTask{
                     }
                     belongTask->currentDir.append(path);
                 }
-                processCMD("LIST","a"); //切换路径后，还要列出文件返回
+                // processCMD("LIST","a"); //切换路径后，还要列出文件返回
+                resPond("257 \""+ belongTask->currentDir+"\" is the current directory\r\n");
             }
             else if(cmd=="PWD"){
                 string curDir=belongTask->currentDir;
@@ -50,21 +51,22 @@ class CMDWD:public FTPTask{
                 }
                 else{  //被动连接
                     auto it=reinterpret_cast<FTPserverCMD*>(belongTask);
-                    _bev=it->TaskCMD["PASS"]->_bev; //获取到数据通道的套接字
+                    _bev=it->TaskCMD["PASV"]->_bev; //获取到数据通道的套接字
                 }
 
                 string result;
                 string _Command;
                 cout<<"CMD.cpp 50:workDir:"<<belongTask->currentDir<<endl;
-                _Command.append("ls "+belongTask->currentDir);
+                _Command.append("ls -l "+belongTask->currentDir);
                 file=popen(_Command.c_str(),"r");
                 char buf[100];
-
+                fgets(buf,100,file); //读出total
                 //读取数据
                 if(file){
                     while(fgets(buf,100,file)!=NULL){
                         result+=buf;
-                        result+="\r\n";
+                        result[result.size()-1]='\r';
+                        result+="\n";
                     }
                 }
                 if(!result.size()) cout<<"CMDWD.cpp 52:respondMsg is null"<<endl;
@@ -89,9 +91,10 @@ class CMDWD:public FTPTask{
                 v.pop_back();
                 sendData(js.dump()+"\r\n");
                 #endif
+                
                 sendData(result);
-
-                pclose(file);
+                resPond("226 Directory send OK.\r\n");
+                if(file!=nullptr) pclose(file);
                 Closefd();
             }
             

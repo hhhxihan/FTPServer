@@ -23,7 +23,9 @@ class CloneFactory{
     FTPTask* createTask(){
         FTPserverCMD* TaskCMD=new FTPserverCMD();
 
-        TaskCMD->registerCMD("PORT",new CMDPORT());
+        FTPTask* port=new CMDPORT();
+        TaskCMD->registerCMD("PORT",port);
+        TaskCMD->registerCMD("PASV",port);
 
         FTPTask* wd=new CMDWD();
         TaskCMD->registerCMD("LIST",wd);

@@ -26,21 +26,38 @@ void FTPserverCMD::readcmd(){
         if(i==' '||i=='\r') break;
        Command+=i;
     } //读取出命令
-
-    if(TaskCMD.find(Command)!=TaskCMD.end()){
+    if(waitConn==1){
+        storeCMD[0]=Command;
+        storeCMD[1]=data;
+        waitConn=0;
+    }
+    else if(TaskCMD.find(Command)!=TaskCMD.end()){
         cout<<"the command is:"<<Command<<endl;
         FTPTask* t=TaskCMD[Command];
             t->transIP = transIP;
 			t->transPort = transPort;
 			t->base = base;
 			t->belongTask=this; //所属的CMD对象
-			t->processCMD(Command, data);
+            t->processCMD(Command, data);
     }
     else{ //没有找到相应的命令时的处理方式
         resPond("202 command failed");
     }
     
-
+}
+void FTPserverCMD::pasvCMD(){
+    if(TaskCMD.find(storeCMD[0])!=TaskCMD.end()){
+        cout<<"the command is:"<<storeCMD[0]<<endl;
+        FTPTask* t=TaskCMD[storeCMD[0]];
+            t->transIP = transIP;
+			t->transPort = transPort;
+			t->base = base;
+			t->belongTask=this; //所属的CMD对象
+            t->processCMD(storeCMD[0], storeCMD[1]);
+    }
+    else{ //没有找到相应的命令时的处理方式
+        resPond("202 command failed");
+    }
 }
 
 void FTPserverCMD::read(bufferevent* bev){

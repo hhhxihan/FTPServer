@@ -41,7 +41,7 @@ void CMDSTOR::processCMD(string cmd,string msg){
     }
     else{  //被动连接
         auto it=reinterpret_cast<FTPserverCMD*>(belongTask);
-        _bev=it->TaskCMD["PASS"]->_bev;
+        _bev=it->TaskCMD["PASV"]->_bev;
     }
 
     if ( fcntl(sockfd, F_SETFL, 0)== -1) {
