@@ -27,7 +27,7 @@ class FTPTask:public Task{
         event_base* base; //Libevent库int
         evutil_socket_t  socketID; 
         struct bufferevent* _bev;  //task中的一个传输控制命令的socket
-        struct evconnlistener* ev; //被动模式下，要监听新的连接请求
+        struct evconnlistener* ev=nullptr; //被动模式下，要监听新的连接请求
         void getConnInfo(struct sockaddr* address);
 
         virtual void processCMD(string cmd,string msg){}; //用于处理命令
@@ -45,6 +45,7 @@ class FTPTask:public Task{
                 cout<<"base is null"<<endl;
             }
             _bev=bufferevent_socket_new(base,socketID,BEV_OPT_CLOSE_ON_FREE);
+            if(!_bev) cout<<"bev is null"<<endl;
             if(_bev){
                 cout<<"enter bev process!"<<endl;
                 bufferevent_setcb(_bev,readCB,writeCB,eventCB,this);

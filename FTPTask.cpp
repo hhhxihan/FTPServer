@@ -33,13 +33,13 @@ void FTPTask::passConnCallback(struct evconnlistener* listener,int fd,sockaddr* 
 
     FTPserverCMD* CMDTask=reinterpret_cast<FTPserverCMD*>(t->belongTask);
     //  调用处理函数
-    t->resPond("150 Here comes the directory listing.\r\n");
     CMDTask->pasvCMD();
     CMDTask->waitConn=0;
 }
 void FTPTask::pasvConnect(){
     belongTask->waitConn=1;
     if(!base) cout<<"base is null"<<endl;
+    if(ev) evconnlistener_free(ev); 
     _bev=bufferevent_socket_new(base,-1,BEV_OPT_CLOSE_ON_FREE);
     if(!_bev) cout<<"bev create failed!"<<endl;
     sockaddr_in sin;

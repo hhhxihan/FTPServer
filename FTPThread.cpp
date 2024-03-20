@@ -5,15 +5,16 @@
 void FTPThread::AddTask(FTPTask* task){
     std::unique_lock lock(mux);
     taskQueue.push(task);
-    char str[]="h";
-    write(pipefd[1],str,sizeof(str));
-    
+    char str[]="hhh";
+    if(-1==write(pipefd[1],str,strlen(str))){
+        cout<<"write pipe failed"<<endl;
+    }
 }
 
 void FTPThread::callback(evutil_socket_t fd,short event,void* arg){
-    char buf[2];
-    int re=read(fd,buf,sizeof(buf));
+    char buf[10];
     FTPThread* t=reinterpret_cast<FTPThread*>(arg);
+    int re=read(t->pipefd[0],buf,sizeof(buf));
     std::unique_lock lock(t->mux);
     while(!t->taskQueue.empty()){
         FTPTask* task=t->taskQueue.front();
@@ -32,8 +33,8 @@ void FTPThread::Init(){//线程的初始化
     base=event_base_new();
     if(!base) cout<<"Thread event_base create failed"<<endl;
 
-    struct event* ev=event_new(base,pipefd[0],EV_READ,callback,this);
-    event_add(ev,0);
+    struct event* ev=event_new(base,pipefd[0],EV_READ| EV_PERSIST,callback,this);
+    event_add(ev,NULL);
     std::thread th(&FTPThread::Main,this);
     th.detach();
     

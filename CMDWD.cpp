@@ -45,7 +45,7 @@ class CMDWD:public FTPTask{
             else if(cmd=="LIST"){ //List要用数据通道发送
                 transIP=belongTask->transIP;
                 transPort=belongTask->transPort;
-
+                resPond("150 Here comes the directory listing.\r\n");
                 if(belongTask->transMode==ACTIVEMODE){
                     ConnectDataPipe(); //主动连接
                 }
@@ -57,7 +57,7 @@ class CMDWD:public FTPTask{
                 string result;
                 string _Command;
                 cout<<"CMD.cpp 50:workDir:"<<belongTask->currentDir<<endl;
-                _Command.append("ls -l "+belongTask->currentDir);
+                _Command.append("ls -al "+belongTask->currentDir);
                 file=popen(_Command.c_str(),"r");
                 char buf[100];
                 fgets(buf,100,file); //读出total
@@ -91,9 +91,9 @@ class CMDWD:public FTPTask{
                 v.pop_back();
                 sendData(js.dump()+"\r\n");
                 #endif
-                
-                sendData(result);
                 resPond("226 Directory send OK.\r\n");
+                sendData(result);
+                
                 if(file!=nullptr) pclose(file);
                 Closefd();
             }

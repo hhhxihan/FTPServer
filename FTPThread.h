@@ -3,6 +3,7 @@
 #include "FTPTask.h"
 #include <unistd.h>
 #include <queue>
+#include <cstring>
 #include <iostream>
 #include <mutex>
 using namespace std;
