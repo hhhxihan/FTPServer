@@ -15,6 +15,11 @@ void FTPTask::resPond(string msg){
     if(!belongTask->_bev) cout<<"bev is null"<<endl;
     bufferevent_write(belongTask->_bev,msg.c_str(),msg.size());
 }
+void FTPTask::resPondimmediately(string msg){
+    cout<<"FTPTask respond:"<<msg<<endl;
+    int sock=bufferevent_getfd(belongTask->_bev);
+    send(sock,msg.c_str(),msg.size(),0);
+}
 
  void FTPTask::setIP(struct sockaddr* address){
     	char ipString[INET_ADDRSTRLEN];
@@ -39,9 +44,12 @@ void FTPTask::passConnCallback(struct evconnlistener* listener,int fd,sockaddr* 
 void FTPTask::pasvConnect(){
     belongTask->waitConn=1;
     if(!base) cout<<"base is null"<<endl;
-    if(ev) evconnlistener_free(ev); 
-    _bev=bufferevent_socket_new(base,-1,BEV_OPT_CLOSE_ON_FREE);
-    if(!_bev) cout<<"bev create failed!"<<endl;
+    if(ev) {
+        evconnlistener_free(ev); 
+        ev=nullptr;
+    }
+    // _bev=bufferevent_socket_new(base,-1,BEV_OPT_CLOSE_ON_FREE);
+    // if(!_bev) cout<<"bev create failed!"<<endl;
     sockaddr_in sin;
     sin.sin_family=AF_INET;
     sin.sin_port=htons(belongTask->transPort);
@@ -49,7 +57,7 @@ void FTPTask::pasvConnect(){
 
     ev=evconnlistener_new_bind(base,passConnCallback,this, LEV_OPT_REUSEABLE,100,
                                             (struct sockaddr*)&sin,sizeof(sin));
-
+    if(!ev) cout<<"ev create failed"<<endl;
     evconnlistener_enable(ev);
 }
 void FTPTask::ConnectDataPipe(){
@@ -94,15 +102,18 @@ void FTPTask::writeCB(struct bufferevent* bev,void* arg){
 }
 
 void FTPTask::eventCB(struct bufferevent* bev,short event,void* arg){
+    cout<<"eventCB doing"<<endl;
     FTPTask* t=static_cast<FTPTask*>(arg);
     t->event(bev,event);
 }
 
 void FTPTask::Closefd(){
-    if(!_bev){
+    if(_bev){
         bufferevent_free(_bev);
+        _bev=nullptr;
     }
-    if(!file){
+    if(file){
         fclose(file);
+        file=nullptr;
     }
 }

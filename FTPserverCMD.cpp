@@ -20,19 +20,19 @@ void FTPserverCMD::readcmd(){
     int len=bufferevent_read(_bev,data,sizeof(data)-1);
     if(len<=0) ; //未读取到数据
     data[len]='\0';
-
+    cout<<"the command is:"<<data<<endl;
     string Command="";
     for(char i:data){
         if(i==' '||i=='\r') break;
        Command+=i;
     } //读取出命令
+    
     if(waitConn==1){
         storeCMD[0]=Command;
         storeCMD[1]=data;
         waitConn=0;
     }
     else if(TaskCMD.find(Command)!=TaskCMD.end()){
-        cout<<"the command is:"<<Command<<endl;
         FTPTask* t=TaskCMD[Command];
             t->transIP = transIP;
 			t->transPort = transPort;
@@ -46,8 +46,8 @@ void FTPserverCMD::readcmd(){
     
 }
 void FTPserverCMD::pasvCMD(){
+    cout<<"the pasv command is:"<<storeCMD[1]<<endl;
     if(TaskCMD.find(storeCMD[0])!=TaskCMD.end()){
-        cout<<"the command is:"<<storeCMD[0]<<endl;
         FTPTask* t=TaskCMD[storeCMD[0]];
             t->transIP = transIP;
 			t->transPort = transPort;

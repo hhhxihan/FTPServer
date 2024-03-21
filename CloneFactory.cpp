@@ -40,12 +40,13 @@ class CloneFactory{
         FTPTask* opt=new CMDOPT();
         TaskCMD->registerCMD("SYST",opt);
         TaskCMD->registerCMD("FEAT",opt);
+        TaskCMD->registerCMD("OPTS",opt);
 
         TaskCMD->registerCMD("TYPE",new CMDTYPE());
         
         TaskCMD->registerCMD("STOR",new CMDSTOR());
         TaskCMD->registerCMD("RETR",new CMDRETR());
-        TaskCMD->registerCMD("OPTS",new CMDOPT());
+
 
         
 

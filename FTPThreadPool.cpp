@@ -12,5 +12,4 @@ FTPThreadPool::FTPThreadPool(int num){
 void FTPThreadPool::addTask(FTPTask* task){
     curNum=(curNum+1)%maxNum;
     threadVector[curNum].AddTask(task);
-    cout<<"id："<<curNum<<endl;
 }

@@ -6,6 +6,7 @@
 #include "FTPserverCMD.h"
 #include <iostream>
 #include "json.hpp"
+#include <unistd.h>
 using json=nlohmann::json;
 class CMDWD:public FTPTask{
     public:
@@ -17,35 +18,44 @@ class CMDWD:public FTPTask{
                 string path=msg.substr(pos+1,msg.size()-pos-3);
                 if(path.at(0)=='/'){
                     belongTask->currentDir=path;
+                    resPond("257 \""+ belongTask->currentDir+"\" is the current directory\r\n");
                 }
+                else if(path.at(1)=='.') processCMD("CDUP","");
                 else{
                     if(belongTask->currentDir[belongTask->currentDir.size()-1]!='/'){
                         belongTask->currentDir.append("/");
                     }
                     belongTask->currentDir.append(path);
+                    resPond("257 \""+ belongTask->currentDir+"\" is the current directory\r\n");
                 }
-                // processCMD("LIST","a"); //切换路径后，还要列出文件返回
-                resPond("257 \""+ belongTask->currentDir+"\" is the current directory\r\n");
+                
             }
             else if(cmd=="PWD"){
                 string curDir=belongTask->currentDir;
                 resPond("257 \""+curDir+"\" is the current directory\r\n");
             }
             else if(cmd=="CDUP"){  //返回上一级目录
+                
                 string path=belongTask->currentDir;
-                if(path[path.size()-1]=='/'){
+                if(path[path.size()-1]=='/'&&path.size()>1){
                     path=path.substr(0,path.size()-1);
                 }
                 int pos=path.rfind("/");
-                path=path.substr(0,pos);
-                belongTask->currentDir=path;
-                processCMD("LIST","a"); //切换路径后，还要列出文件返回
-                resPond("220 CDUP success!");//回复消息  
+                if(pos==0){
+                    resPond("257 \"/\" is the current directory\r\n");
+                }else{
+                    path=path.substr(0,pos);
+                    belongTask->currentDir=path;
+                // processCMD("LIST","a"); //切换路径后，还要列出文件返回
+                    resPond("257 \""+path+"\" is the current directory\r\n");
+                }
+                
             }
             else if(cmd=="LIST"){ //List要用数据通道发送
                 transIP=belongTask->transIP;
                 transPort=belongTask->transPort;
-                resPond("150 Here comes the directory listing.\r\n");
+                resPondimmediately("150 Here comes the directory listing.\r\n");
+                bufferevent_flush(belongTask->_bev,EV_WRITE,BEV_FLUSH);
                 if(belongTask->transMode==ACTIVEMODE){
                     ConnectDataPipe(); //主动连接
                 }
@@ -91,16 +101,26 @@ class CMDWD:public FTPTask{
                 v.pop_back();
                 sendData(js.dump()+"\r\n");
                 #endif
-                resPond("226 Directory send OK.\r\n");
+                bufferevent_flush(_bev,EV_WRITE,BEV_FLUSH);
+                // bufferevent_disable(_bev,EV_READ|EV_WRITE);
                 sendData(result);
+                // int tfd=bufferevent_getfd(_bev);
+                // close(tfd);
+                // if(_bev!=NULL){
+                //     cout<<"colse data bev"<<endl;
+                //     bufferevent_free(_bev);
+                // }
                 
-                if(file!=nullptr) pclose(file);
+                // if(file!=nullptr) pclose(file);
+                sleep(2);
+                resPond("226 Directory send OK.\r\n");
                 Closefd();
             }
             
         }
         
         void event(struct bufferevent* bev, short what){
+            cout<<"event dongi 1"<<endl;
             if (what & (BEV_EVENT_EOF | BEV_EVENT_ERROR | BEV_EVENT_TIMEOUT))
             {
                 cout << "BEV_EVENT_EOF | BEV_EVENT_ERROR" << endl;

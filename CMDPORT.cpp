@@ -6,6 +6,18 @@ using namespace std;
 
 class CMDPORT:public FTPTask{
     public:
+    void event(struct bufferevent* bev,short _event){
+        cout<<"event is doing2"<<endl;
+        if(_event&BEV_EVENT_EOF){
+            cout<<"_bev disconn"<<endl;
+             resPond("226 Directory send OK.\r\n");
+        }else if(_event&BEV_EVENT_ERROR){
+            cout<<"data _bev error"<<endl;
+            resPond("226 Directory send OK.\r\n");
+        }else if(_event&BEV_EVENT_TIMEOUT){
+            cout<<"time out"<<endl;
+        }
+    }
         void processCMD(string cmd,string msg){ //处理PORT命令
             if(cmd=="PORT"){
                 belongTask->transMode=ACTIVEMODE;
@@ -51,4 +63,5 @@ class CMDPORT:public FTPTask{
             }
             
         }
+
 };

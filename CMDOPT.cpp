@@ -8,7 +8,9 @@ void CMDOPT::processCMD(string cmd,string msg){ //处理PORT命令
 
         resPond("215 UNIX Type: L8\r\n");
     }else if(cmd=="FEAT"){
-        resPond("211-Features:\r\n211 End\r\n");
+        resPond("211-Features:\r\nSIZE\r\nMDTM\r\nEPRT\r\n211 End\r\n");
+    }else if(cmd=="OPTS"){
+        resPond("200 Always in UTF8 mode.\r\n");
     }
     // resPond("200 always in UTF8 mode!\r\n");
     

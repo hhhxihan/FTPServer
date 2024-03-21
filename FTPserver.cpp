@@ -4,6 +4,9 @@
 #include "CloneFactory.cpp"
 #include <event2/util.h>
 #include <cstring>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netinet/tcp.h> // 包含TCP_NODELAY定义
 
 
 using namespace std;
@@ -17,6 +20,12 @@ void callback(struct evconnlistener* evlistener,evutil_socket_t fd,struct sockad
     
     if(!t) cout<<"FTPTask create failed"<<endl;
     t->socketID=fd;
+    int flag = 1;
+    int result = setsockopt(fd, IPPROTO_TCP, TCP_NODELAY, (char *) &flag, sizeof(int));
+    if (result < 0) {
+        // 处理错误
+        cout<<"setsocketopt failed"<<endl;
+    }
     t->setIP(address);
     t->getConnInfo(address);
     threadPool->addTask(t);

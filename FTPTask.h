@@ -34,6 +34,7 @@ class FTPTask:public Task{
         
         virtual void resPond(string msg); //回复命令
         virtual void respWD(){}; //回复当前路径
+        void resPondimmediately(string msg);
 
         void ConnectDataPipe(); //主动链接
         void pasvConnect(); //被动连接
@@ -70,7 +71,9 @@ class FTPTask:public Task{
         virtual void Closefd();
         virtual void read(bufferevent* bev){}
         virtual void write(bufferevent* bev){}
-        virtual void event(struct bufferevent* bev,short _event){}
+        virtual void event(struct bufferevent* bev,short _event){ 
+            cout<<"main connect error"<<endl;
+        }
         
 
     protected:
