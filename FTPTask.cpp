@@ -6,6 +6,7 @@
 #include <arpa/inet.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
+#include <unistd.h>
 using namespace std;
 class FTPserverCMD;
 
@@ -84,10 +85,10 @@ void FTPTask::getConnInfo(struct sockaddr* address){
 }
 
 void FTPTask::sendData(string msg){
+    cout<<"FTPTask.cpp:87 send data:"+msg;
     if(_bev!=NULL){
         bufferevent_write(_bev,msg.c_str(),msg.size());
     }
-    
 }
 
 void FTPTask::readCB(struct bufferevent* bev,void* arg){

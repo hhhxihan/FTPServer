@@ -18,7 +18,7 @@ class CMDWD:public FTPTask{
                 string path=msg.substr(pos+1,msg.size()-pos-3);
                 if(path.at(0)=='/'){
                     belongTask->currentDir=path;
-                    resPond("257 \""+ belongTask->currentDir+"\" is the current directory\r\n");
+                    resPond("250 \""+ belongTask->currentDir+"\" is the current directory\r\n");
                 }
                 else if(path.at(1)=='.') processCMD("CDUP","");
                 else{
@@ -26,7 +26,7 @@ class CMDWD:public FTPTask{
                         belongTask->currentDir.append("/");
                     }
                     belongTask->currentDir.append(path);
-                    resPond("257 \""+ belongTask->currentDir+"\" is the current directory\r\n");
+                    resPond("250 \""+ belongTask->currentDir+"\" is the current directory\r\n");
                 }
                 
             }
@@ -54,7 +54,7 @@ class CMDWD:public FTPTask{
             else if(cmd=="LIST"){ //List要用数据通道发送
                 transIP=belongTask->transIP;
                 transPort=belongTask->transPort;
-                resPondimmediately("150 Here comes the directory listing.\r\n");
+                
                 bufferevent_flush(belongTask->_bev,EV_WRITE,BEV_FLUSH);
                 if(belongTask->transMode==ACTIVEMODE){
                     ConnectDataPipe(); //主动连接
@@ -101,9 +101,10 @@ class CMDWD:public FTPTask{
                 v.pop_back();
                 sendData(js.dump()+"\r\n");
                 #endif
-                bufferevent_flush(_bev,EV_WRITE,BEV_FLUSH);
+                // bufferevent_flush(_bev,EV_WRITE,BEV_FLUSH);
                 // bufferevent_disable(_bev,EV_READ|EV_WRITE);
                 sendData(result);
+                resPondimmediately("150 Here comes the directory listing.\r\n");
                 // int tfd=bufferevent_getfd(_bev);
                 // close(tfd);
                 // if(_bev!=NULL){
@@ -112,9 +113,9 @@ class CMDWD:public FTPTask{
                 // }
                 
                 // if(file!=nullptr) pclose(file);
-                sleep(2);
-                resPond("226 Directory send OK.\r\n");
                 Closefd();
+                resPond("226 Directory send OK.\r\n");
+                
             }
             
         }
