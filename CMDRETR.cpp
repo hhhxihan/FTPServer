@@ -29,14 +29,21 @@ void CMDRETR::processCMD(string cmd,string msg){
     std::streampos size=File.tellg();
     std::streamoff tsize=static_cast<streamoff>(size);
     string fileLen=std::to_string(tsize);
-    resPond(fileLen);
+    // resPond(fileLen);
     
-    bufferevent_disable(belongTask->_bev,EV_READ); //
-    evutil_socket_t _fd=bufferevent_getfd(belongTask->_bev);
+    // bufferevent_disable(belongTask->_bev,EV_READ); //
+    // evutil_socket_t _fd=bufferevent_getfd(belongTask->_bev);
+    
+    // recv(_fd,buf,sizeof(buf),0);
     char buf[MAXSIZE];
-    recv(_fd,buf,sizeof(buf),0);
-
-    ConnectDataPipe(); //连接数据通道
+    if(belongTask->transMode==ACTIVEMODE){
+        ConnectDataPipe(); //主动连接
+    }
+    else{  //被动连接
+        auto it=reinterpret_cast<FTPserverCMD*>(belongTask);
+        _bev=it->TaskCMD["PASV"]->_bev; //获取到数据通道的套接字
+        if(_bev==nullptr) cout<<"CMDWD.cpp 63: _bev is NULL"<<endl;
+    }//连接数据通道
     File.seekg(0,ios::beg);
     //传输数据
     int sendSize=0;
@@ -44,10 +51,25 @@ void CMDRETR::processCMD(string cmd,string msg){
     while((sendSize=File.readsome(buf,MAXSIZE))>0){
         sendData(buf);
     }
+    
+    // bufferevent_enable(belongTask->_bev,EV_READ);
+    resPondimmediately("150 Opening BINARY mode data connection for favicon.ico (15086 bytes).\r\n");
 
-    bufferevent_enable(belongTask->_bev,EV_READ);
-    Closefd(); //关闭连接
-    //传输完后还要回复currentdir
+    bufferevent_flush(_bev, EV_WRITE, BEV_FLUSH);
+
+    Closefd();
+    resPond("226 Transfer complete.\r\n");
+    
+}
+void CMDRETR::sendData(string msg){
+    if(_bev!=NULL){
+        int tfd=bufferevent_getfd(_bev);
+        send(tfd,msg.c_str(),msg.size(),0);
+        // bufferevent_write(_bev,msg.c_str(),msg.size());
+        // bufferevent_flush(_bev, EV_WRITE, BEV_FLUSH);
+    }else{
+        cout<<"FTPTask:94 _bev is NULL\n";
+    }
 }
 
 void CMDRETR::read(struct bufferevent* bev){
@@ -65,6 +87,16 @@ void CMDRETR::event(struct bufferevent* bev,short _event){
         resPond("msg");
     }
 }
+void CMDRETR::Closefd(){
+    if(_bev){
+        bufferevent_free(_bev);
+        _bev=nullptr;
+    }
+    if(File.is_open()){
+        File.close();
+    }
+}
+
 
 
 

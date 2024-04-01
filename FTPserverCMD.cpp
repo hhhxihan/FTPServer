@@ -46,7 +46,7 @@ void FTPserverCMD::readcmd(){
     
 }
 void FTPserverCMD::pasvCMD(){
-    cout<<"the pasv command is:"<<storeCMD[1]<<endl;
+    cout<<"the pasv command is:"<<storeCMD[0]<<endl;
     if(TaskCMD.find(storeCMD[0])!=TaskCMD.end()){
         FTPTask* t=TaskCMD[storeCMD[0]];
             t->transIP = transIP;

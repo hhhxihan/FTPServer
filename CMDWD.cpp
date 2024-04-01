@@ -52,8 +52,6 @@ class CMDWD:public FTPTask{
                 
             }
             else if(cmd=="LIST"){ //List要用数据通道发送
-                transIP=belongTask->transIP;
-                transPort=belongTask->transPort;
                 
                 bufferevent_flush(belongTask->_bev,EV_WRITE,BEV_FLUSH);
                 if(belongTask->transMode==ACTIVEMODE){
@@ -62,11 +60,12 @@ class CMDWD:public FTPTask{
                 else{  //被动连接
                     auto it=reinterpret_cast<FTPserverCMD*>(belongTask);
                     _bev=it->TaskCMD["PASV"]->_bev; //获取到数据通道的套接字
+                    if(_bev==nullptr) cout<<"CMDWD.cpp 63: _bev is NULL"<<endl;
                 }
 
                 string result;
                 string _Command;
-                cout<<"CMD.cpp 50:workDir:"<<belongTask->currentDir<<endl;
+                
                 _Command.append("ls -al "+belongTask->currentDir);
                 file=popen(_Command.c_str(),"r");
                 char buf[100];
@@ -101,18 +100,12 @@ class CMDWD:public FTPTask{
                 v.pop_back();
                 sendData(js.dump()+"\r\n");
                 #endif
-                // bufferevent_flush(_bev,EV_WRITE,BEV_FLUSH);
-                // bufferevent_disable(_bev,EV_READ|EV_WRITE);
+
                 sendData(result);
                 resPondimmediately("150 Here comes the directory listing.\r\n");
-                // int tfd=bufferevent_getfd(_bev);
-                // close(tfd);
-                // if(_bev!=NULL){
-                //     cout<<"colse data bev"<<endl;
-                //     bufferevent_free(_bev);
-                // }
-                
-                // if(file!=nullptr) pclose(file);
+
+                bufferevent_flush(_bev, EV_WRITE, BEV_FLUSH);
+
                 Closefd();
                 resPond("226 Directory send OK.\r\n");
                 
@@ -132,6 +125,16 @@ class CMDWD:public FTPTask{
                 
             }
         }
+        void sendData(string msg){
+            if(_bev!=NULL){
+                int tfd=bufferevent_getfd(_bev);
+                send(tfd,msg.c_str(),msg.size(),0);
+                // bufferevent_write(_bev,msg.c_str(),msg.size());
+                // bufferevent_flush(_bev, EV_WRITE, BEV_FLUSH);
+            }else{
+                cout<<"FTPTask:94 _bev is NULL\n";
+        }
+}
 };
 
 

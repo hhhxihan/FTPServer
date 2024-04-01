@@ -17,7 +17,7 @@ class FTPTask:public Task{
         std::string rootDir=".";     //当前目录的相对路径
 
         std::string transIP="";
-        int transMode=ACTIVEMODE;
+        int transMode=PASVMODE;
         int transPort=20;
         
         int waitConn=0;
@@ -49,7 +49,7 @@ class FTPTask:public Task{
             if(!_bev) cout<<"bev is null"<<endl;
             if(_bev){
                 cout<<"enter bev process!"<<endl;
-                bufferevent_setcb(_bev,readCB,writeCB,eventCB,this);
+                bufferevent_setcb(_bev,readCB,NULL,eventCB,this);
                 if(-1==bufferevent_enable(_bev,EV_READ)){
                     cout<<"buffevent_enable faild!"<<endl;
                 }

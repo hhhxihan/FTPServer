@@ -33,9 +33,10 @@ void FTPTask::passConnCallback(struct evconnlistener* listener,int fd,sockaddr* 
     cout<<"new data connect"<<endl;
     FTPTask* t=reinterpret_cast<FTPTask*>(arg);
     t->_bev=bufferevent_socket_new(t->belongTask->base,fd,BEV_OPT_CLOSE_ON_FREE);
+    if(t->_bev==nullptr) cout<<"FTPTask.cpp 36:_bev is null"<<endl;
 
-    bufferevent_setcb(t->_bev,readCB,writeCB,eventCB,t);
-    bufferevent_enable(t->_bev,EV_READ|EV_WRITE);
+    bufferevent_setcb(t->_bev,readCB,nullptr,eventCB,t);
+    bufferevent_enable(t->_bev,EV_WRITE);
 
     FTPserverCMD* CMDTask=reinterpret_cast<FTPserverCMD*>(t->belongTask);
     //  调用处理函数
@@ -62,6 +63,7 @@ void FTPTask::pasvConnect(){
     evconnlistener_enable(ev);
 }
 void FTPTask::ConnectDataPipe(){
+    cout<<"active connect"<<endl;
     if(!base) cout<<"base is null"<<endl;
     _bev=bufferevent_socket_new(base,-1,BEV_OPT_CLOSE_ON_FREE);
     if(!_bev) cout<<"bev create failed!"<<endl;
@@ -87,7 +89,12 @@ void FTPTask::getConnInfo(struct sockaddr* address){
 void FTPTask::sendData(string msg){
     cout<<"FTPTask.cpp:87 send data:"+msg;
     if(_bev!=NULL){
+        // int tfd=bufferevent_getfd(_bev);
+        // send(tfd,msg.c_str(),msg.size(),0);
         bufferevent_write(_bev,msg.c_str(),msg.size());
+        bufferevent_flush(_bev, EV_WRITE, BEV_FLUSH);
+    }else{
+        cout<<"FTPTask:94 _bev is NULL\n";
     }
 }
 

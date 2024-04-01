@@ -31,11 +31,11 @@ void CMDSTOR::processCMD(string cmd,string msg){
     outFile=std::ofstream(filePath,ios::binary);
 
     // bufferevent_disable(belongTask->_bev,EV_READ); //关闭主事件的监听
-    evutil_socket_t sockfd=bufferevent_getfd(belongTask->_bev);
-    char buf[MAXSIZE]="220 able to accept file\r\n";
-    if(-1==send(sockfd,buf,sizeof(buf),0)){
-        cout<<"send faild!"<<endl;
-    }
+    // evutil_socket_t sockfd=bufferevent_getfd(belongTask->_bev);
+    // char buf[MAXSIZE]="220 able to accept file\r\n";
+    // if(-1==send(sockfd,buf,sizeof(buf),0)){
+    //     cout<<"send faild!"<<endl;
+    // }
     if(belongTask->transMode==ACTIVEMODE){
         ConnectDataPipe(); //主动连接
     }
@@ -43,7 +43,6 @@ void CMDSTOR::processCMD(string cmd,string msg){
         auto it=reinterpret_cast<FTPserverCMD*>(belongTask);
         _bev=it->TaskCMD["PASV"]->_bev;
     }
-    cout<<"get pasv socket"<<endl;
     // if ( fcntl(sockfd, F_SETFL, 0)== -1) {
     //     std::perror("Error setting socket option");
     // }
@@ -64,15 +63,23 @@ void CMDSTOR::processCMD(string cmd,string msg){
     // fcntl(sockfd, F_SETFL, newSocketFlag);
 
     // bufferevent_enable(belongTask->_bev,EV_READ);
+
+        resPondimmediately("150 Here comes the directory listing.\r\n");
+
+        bufferevent_flush(_bev, EV_WRITE, BEV_FLUSH);
+
+        Closefd();
+        resPond("226 Directory send OK.\r\n");
     
 }
 
 void CMDSTOR::read(struct bufferevent* bev){
-    cout<<"CMDSTOR 67:enter read"<<endl;
     char buf[MAXSIZE];
     int len=0;
+    int tfd=bufferevent_getfd(_bev);
     if(outFile.is_open()){
-        while((len=bufferevent_read(bev,buf,MAXSIZE-1))>0){
+        cout<<"strat recv"<<endl;
+        while((len=recv(tfd,buf,sizeof(buf),0))>0){
             cout<<"CMDSTOR.cpp 72:recv data "<<len<<endl;
             buf[len]='\0';
             outFile.write(buf, len);
