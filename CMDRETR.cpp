@@ -6,33 +6,32 @@ void CMDRETR::processCMD(string cmd,string msg){
     std::filesystem::path _path(msg.c_str());
 
     string _p=_path.string();
-
+    string tempDir="";
     if(!_p.empty()){ 
         if(belongTask->currentDir.at(belongTask->currentDir.size()-1)!='/'){
             belongTask->currentDir+="/";
         }
+        
         if(_p.at(0)=='/'){  //绝对路径
-            belongTask->currentDir=_p;
+            tempDir=belongTask->currentDir+_p;
         }
         else if(_p.at(0)=='.'){  // ./xxx类型相对路径
             _p=_p.substr(2,_p.size()-2);
-            belongTask->currentDir+=_p;
+            tempDir=belongTask->currentDir+_p;
         }
         else{
-            belongTask->currentDir+=_p;
+            tempDir=belongTask->currentDir+_p;
         }
-        cout<<"The file is:"<<belongTask->currentDir;
+        cout<<"The file is:"<<tempDir<<endl;
     }
-
-    std::filesystem::path filePath(belongTask->currentDir);
+    //现在tempDir是要下载的文件
+    //如果是文件夹。
+    std::filesystem::path filePath(tempDir);
     File=std::ifstream(filePath,std::ios::binary | std::ios::ate);
     std::streampos size=File.tellg();
     std::streamoff tsize=static_cast<streamoff>(size);
-    string fileLen=std::to_string(tsize);
-    // resPond(fileLen);
-    
-    // bufferevent_disable(belongTask->_bev,EV_READ); //
-    // evutil_socket_t _fd=bufferevent_getfd(belongTask->_bev);
+    string fileLen=std::to_string(tsize); //打开文件，并且计算大小。
+
     
     // recv(_fd,buf,sizeof(buf),0);
     char buf[MAXSIZE];
@@ -46,14 +45,12 @@ void CMDRETR::processCMD(string cmd,string msg){
     }//连接数据通道
     File.seekg(0,ios::beg);
     //传输数据
-    int sendSize=0;
     
-    while((sendSize=File.readsome(buf,MAXSIZE))>0){
-        sendData(buf);
-    }
+    resPondimmediately("150 Opening BINARY mode data connection.\r\n");
+    sendData(File);
     
     // bufferevent_enable(belongTask->_bev,EV_READ);
-    resPondimmediately("150 Opening BINARY mode data connection for favicon.ico (15086 bytes).\r\n");
+    
 
     bufferevent_flush(_bev, EV_WRITE, BEV_FLUSH);
 
@@ -61,10 +58,19 @@ void CMDRETR::processCMD(string cmd,string msg){
     resPond("226 Transfer complete.\r\n");
     
 }
-void CMDRETR::sendData(string msg){
+void CMDRETR::sendData(std::ifstream& File){
+    int filesize=0;
+    int sendSize=0;
     if(_bev!=NULL){
         int tfd=bufferevent_getfd(_bev);
-        send(tfd,msg.c_str(),msg.size(),0);
+        set_socket_blocking(tfd,1);
+        char buf[MAXSIZE];
+        while((sendSize=File.readsome(buf,MAXSIZE))>0){
+            filesize+=sendSize;
+            send(tfd,buf,sizeof(buf),0);
+        }
+        cout<<"CMDRETR.cpp 56: filesize:"<<filesize<<endl;
+        set_socket_blocking(tfd,0);
         // bufferevent_write(_bev,msg.c_str(),msg.size());
         // bufferevent_flush(_bev, EV_WRITE, BEV_FLUSH);
     }else{

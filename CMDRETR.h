@@ -12,7 +12,7 @@ class CMDRETR:public FTPTask{
         void event(struct bufferevent* bev,short _event);
         void processCMD(string cmd,string msg);
         void Closefd();
-        void sendData(string msg);
+        void sendData(std::ifstream& File);
     protected:
          ifstream File; 
 };

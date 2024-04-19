@@ -72,7 +72,7 @@ class FTPTask:public Task{
         virtual void read(bufferevent* bev){}
         virtual void write(bufferevent* bev){}
         virtual void event(struct bufferevent* bev,short _event){ 
-            cout<<"main connect error"<<endl;
+            cout<<"FTPTask.h 75:main connect error"<<endl;
         }
         
 

@@ -47,6 +47,7 @@ void FTPTask::pasvConnect(){
     belongTask->waitConn=1;
     if(!base) cout<<"base is null"<<endl;
     if(ev) {
+        evconnlistener_disable(ev);
         evconnlistener_free(ev); 
         ev=nullptr;
     }
@@ -110,7 +111,6 @@ void FTPTask::writeCB(struct bufferevent* bev,void* arg){
 }
 
 void FTPTask::eventCB(struct bufferevent* bev,short event,void* arg){
-    cout<<"eventCB doing"<<endl;
     FTPTask* t=static_cast<FTPTask*>(arg);
     t->event(bev,event);
 }

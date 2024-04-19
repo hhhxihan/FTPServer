@@ -43,8 +43,9 @@ class CloneFactory{
         TaskCMD->registerCMD("OPTS",opt);
 
         TaskCMD->registerCMD("TYPE",new CMDTYPE());
-        
-        TaskCMD->registerCMD("STOR",new CMDSTOR());
+        FTPTask* stor=new CMDSTOR();
+        TaskCMD->registerCMD("STOR",stor);
+        TaskCMD->registerCMD("MDTM",stor);
         TaskCMD->registerCMD("RETR",new CMDRETR());
 
 

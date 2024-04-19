@@ -42,14 +42,16 @@ class CMDPORT:public FTPTask{
                 belongTask->transMode=PASVMODE;
                 //随机生成端口号
                 //获取到自己的IP地址
-                std::random_device rd;
-                std::mt19937 gen(rd()); // 使用 Mersenne Twister 算法
+                std::random_device rd,rd1;
+                std::mt19937 gen(rd()),gen1(rd1()); // 使用 Mersenne Twister 算法
 
                 // 定义一个随机数分布
-                std::uniform_int_distribution<> dis(160, 200); // 生成 1 到 100 之间的整数
+                std::uniform_int_distribution<> dis(160, 200);
+                std::uniform_int_distribution<> dis2(0, 255); 
                 // 生成随机数
                 int random_number = dis(gen);
-                belongTask->transPort=random_number*256;
+                int random_number1 =dis2(gen1);
+                belongTask->transPort=random_number*256+random_number1;
                 string tcmd="ifconfig | grep -Eo 'inet (addr:)?([0-9]*\\.){3}[0-9]*' | grep -Eo '([0-9]*\\.){3}[0-9]*' | grep -v '127.0.0.1'";
                 file=popen(tcmd.c_str(),"r");
                 char buf[100];
@@ -57,7 +59,8 @@ class CMDPORT:public FTPTask{
                 pclose(file);
                 string respStr(buf);
                 for(char& c:respStr) if(c=='.'||c=='\n') c=',';
-                respStr+=std::to_string(random_number)+",0)\r\n";
+                respStr+=std::to_string(random_number)+","+std::to_string(random_number1)+")\r\n";
+                cout<<"cmdPort.cpp 61:"<<respStr<<endl;
                 pasvConnect();
                 resPond("227 Entering Passive Mode ("+respStr);
             }
