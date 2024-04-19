@@ -7,7 +7,7 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/tcp.h> // 包含TCP_NODELAY定义
-
+int cnt=0;
 
 using namespace std;
 
@@ -15,7 +15,7 @@ FTPThreadPool *threadPool=nullptr;
 CloneFactory* CloneFactory::singleFactory=nullptr;
 
 void callback(struct evconnlistener* evlistener,evutil_socket_t fd,struct sockaddr* address,int socklen,void* arg){
-    cout<<"new conncet"<<endl;
+    cout<<"new conncet:"<<++cnt<<endl;
     FTPTask* t=CloneFactory::get()->createTask();
     
     if(!t) cout<<"FTPTask create failed"<<endl;
